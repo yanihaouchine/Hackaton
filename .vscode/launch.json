@@ -1,0 +1,9 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    { "name": "Python: fichier courant", "type": "debugpy", "request": "launch", "program": "${file}", "console": "integratedTerminal", "justMyCode": false },
+    { "name": "Python: pytest", "type": "debugpy", "request": "launch", "module": "pytest", "args": ["-q", "${file}"], "console": "integratedTerminal" },
+    { "name": "C/C++: binaire (lldb)", "type": "lldb", "request": "launch", "program": "${input:binary}", "args": [], "cwd": "${workspaceFolder}" }
+  ],
+  "inputs": [ { "id": "binary", "type": "promptString", "description": "Chemin du binaire à déboguer" } ]
+}

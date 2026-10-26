@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "llama-server CPU (Qwen3.5-2B)", "type": "shell", "isBackground": true,
+      "command": "tools/llama.cpp/build-cpu/bin/llama-server -m models/qwen3.5-2b/Qwen3.5-2B-Q4_K_M.gguf -t 4 --port 8080", "problemMatcher": [] },
+    { "label": "llama-server CUDA (Qwen3.5-4B)", "type": "shell", "isBackground": true,
+      "command": "tools/llama.cpp/build-cuda/bin/llama-server -m models/qwen3.5-4b/Qwen3.5-4B-Q4_K_M.gguf -ngl 99 --port 8080", "problemMatcher": [] },
+    { "label": "bench CPU 4 threads (modèle courant)", "type": "shell",
+      "command": "tools/llama.cpp/build-cpu/bin/llama-bench -m ${file} -t 4", "problemMatcher": [] },
+    { "label": "pytest", "type": "shell", "command": ".venv/bin/pytest -q", "group": { "kind": "test", "isDefault": true } }
+  ]
+}
