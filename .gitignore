@@ -22,3 +22,14 @@ compile_commands.json
 
 # Données (régénérables via téléchargement Kaggle)
 data/
+
+# Fichiers temporaires / caches / secrets
+*.part
+*.parquet
+*.npy
+*.npz
+.env
+kaggle.json
+
+# Exception : le modèle livré (petit) est versionné
+!artifacts/*.onnx
