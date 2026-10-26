@@ -33,3 +33,7 @@ kaggle.json
 
 # Exception : le modèle livré (petit) est versionné
 !artifacts/*.onnx
+
+# Configuration locale (propre à chaque poste)
+.vscode/
+env.sh

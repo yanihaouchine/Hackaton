@@ -17,9 +17,10 @@ for v in "${@:-HI-Small}"; do
       continue
     fi
     echo "téléchargement : $f"
-    curl -sSL --fail --retry 3 -o "$DEST/$f.part" "$BASE/$f"
+    # -C - : reprend un .part interrompu au lieu de tout retélécharger
+    curl -L --fail --retry 3 -C - -o "$DEST/$f.part" "$BASE/$f"
     mv "$DEST/$f.part" "$DEST/$f"
   done
 done
 
-wc -l "$DEST"/*
+ls -lh "$DEST"   # (wc -l prendrait des minutes sur les variantes Large)

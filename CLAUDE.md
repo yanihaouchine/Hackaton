@@ -1,155 +1,105 @@
 # CLAUDE.md : hackathon AML basse consommation
 
-Référence de toutes les sessions Claude Code. À tenir à jour (surtout « Décisions prises » et les TODO).
+Référence de toutes les sessions Claude Code sur ce dépôt. À tenir à jour, surtout « Décisions prises ».
+État actuel : **aucun code de solution**. Le dépôt ne contient que les données (`data/`, non versionné), `scripts/get_data.sh` et ce fichier.
+L'architecture n'est pas encore fixée : ne pas en inventer une ; la proposer et la faire valider avant d'écrire du code.
 
 ## Projet
-Système de lutte anti-blanchiment (LCB-FT) **en flux** : rejouer IBM AML HI-Small comme un flux de transactions,
-lever des alertes justifiées et produire pour chacune un **rapport inspiré de la déclaration de soupçon TRACFIN**.
-Cible : machines de 4 à 7 W (la plus faible : OrangePi Zero 4, 4 GB, ARM A76/A55), mais aussi Jetson Orin, RTX 3060 et Xeon/A6000.
+Lutte anti-blanchiment (LCB-FT) : à partir du flux de transactions IBM AML, lever des alertes **justifiées** et produire pour chacune
+un rapport inspiré de la déclaration de soupçon **TRACFIN**. Hackathon de 2 jours (26 et 27/10/2026).
+Les organisateurs n'ont fourni que le dataset : le rejeu en flux et le modèle de rapport sont à construire nous-mêmes.
+Les données publiques externes sont autorisées.
 
-Grille de notation (rattacher chaque décision à une ligne) :
-| Poids | Critère | Ce qu'on montre |
+Grille de notation : chaque choix doit se rattacher à au moins une ligne.
+| Poids | Critère | Attendu |
 |---|---|---|
-| 25 % | Pertinence métier | Alertes triées par priorité, typologie nommée, rapport exploitable par un analyste |
-| 20 % | Qualité technique | F1, PR-AUC, précision@k sur un test temporel, baselines |
-| 20 % | Frugalité | Latence p50/p99, débit, RAM max, taille sur disque, énergie : **mesurés** |
-| 15 % | Explicabilité | Règles déclenchées, typologie, contributions des features par alerte |
-| 10 % | Démo | Rejeu en flux, alertes en direct, rapport généré |
-| 10 % | Présentation | 15 min, chiffres issus de `results/` |
+| 25 % | Pertinence métier | Utile à un analyste conformité : alertes priorisées, typologie nommée, rapport exploitable |
+| 20 % | Qualité technique | Résultats mesurés et bien évalués |
+| 20 % | Frugalité | Taille, énergie, latence |
+| 15 % | Explicabilité | Chaque alerte se justifie |
+| 10 % | Démonstration | Elle fonctionne et se comprend |
+| 10 % | Présentation | Claire, tenue en 15 minutes |
+
+## Contraintes matérielles
+- Cible : machines de 4 à 7 W. La plus faible est l'**OrangePi Zero 4** (4 GB de RAM, 2× A76 et 6× A55, NPU de 3 TOPS).
+  Autres machines de test : Jetson Orin (ARM, 32 GB), RTX 3060 12 GB (30 GB de RAM), Xeon 56 cœurs avec 2× A6000.
+- Code **indépendant de l'architecture** (Intel, AMD, ARM64) : pas de `-march=native`, pas d'intrinsèques, pas de dépendance obligatoire à CUDA ou au NPU.
+  Toute accélération reste optionnelle, détectée à l'exécution, avec un repli CPU.
 
 ## Données (`data/`, jamais committé)
-- `data/raw/` via `scripts/get_data.sh` (Kaggle `ealtman2019/ibm-transactions-for-anti-money-laundering-aml`, public) :
-  `HI-Small_Trans.csv` (5 078 345 tx, 5 177 illicites, environ 0,1 %), `HI-Small_accounts.csv` (518 581 comptes),
-  `HI-Small_Patterns.txt` (370 tentatives, 8 typologies : fan-in, fan-out, cycle, gather-scatter, scatter-gather, bipartite, stack, random).
-- `data/prep/` : sorties de préparation déjà générées (`HI-Small_tx.parquet`, `HI-Small_accounts.parquet`,
-  `HI-Small_feat.npy` de 894 MB, `HI-Small_meta.json` avec `t0`, taux `usd_per_unit` déduits du dataset et catégories).
-  Le code source qui les a produites n'est **pas** dans le dépôt (voir TODO).
+- `scripts/get_data.sh [VARIANTE...]` télécharge dans `data/raw/` depuis Kaggle (`ealtman2019/ibm-transactions-for-anti-money-laundering-aml`, public, sans clé).
+  La variante par défaut est HI-Small. `scripts/get_data_large.sh` récupère les autres (LI-Small, HI/LI-Medium, HI/LI-Large : environ 38 GiB),
+  après avoir vérifié l'espace disque ; les téléchargements interrompus reprennent. Ne jamais charger une variante Large entièrement en RAM.
+- HI-Small (vérifié) :
+  - `HI-Small_Trans.csv` : 5 078 345 transactions, dont 5 177 illicites (0,102 %).
+  - `HI-Small_accounts.csv` : 518 581 comptes (banque, compte, entité).
+  - `HI-Small_Patterns.txt` : 370 tentatives en 8 typologies (fan-in, fan-out, cycle, gather-scatter, scatter-gather, bipartite, stack, random).
+- Formats de paiement : Cheque, Credit Card, ACH, Cash, Reinvestment, Wire, Bitcoin.
+  591 212 auto-virements (émetteur = destinataire) ; 72 170 transactions où la devise payée diffère de la devise reçue.
 - **Pièges** :
-  - Le CSV n'est **pas trié** : trier de façon stable par `Timestamp` (résolution à la minute, garder l'ordre du fichier en cas d'égalité).
-  - Deux colonnes `Account` : renommer en `from_acct` et `to_acct` dès la lecture. Un compte s'identifie par **(banque, compte)**.
-  - Période : 01/09 au 10/09, puis une traîne d'environ 1 100 tx du 11 au 18/09 (fins de tentatives) : la traiter à part.
-  - Il existe des auto-virements (`Reinvestment`, émetteur = destinataire) et des paiements multi-devises (Amount Paid ≠ Amount Received).
-  - `HI-Small_Patterns.txt` et `Is Laundering` servent **uniquement** à l'évaluation et à l'étiquetage des typologies, jamais comme feature.
-- Sources externes (listes GAFI, taux de change, autres variantes IBM) : à documenter dans `data/SOURCES.md` (URL, licence, date, usage) **avant** utilisation. TODO : créer ce fichier.
+  - Le CSV n'est **pas trié** par date : faire un tri stable sur `Timestamp` (résolution à la minute).
+  - Deux colonnes portent le nom `Account` (émetteur et destinataire) : les renommer dès la lecture. Un compte s'identifie par le couple **(banque, compte)**.
+  - Les codes banque ont des zéros en tête (`010`, `03208`) : les lire en **chaîne**, pas en entier.
+  - La période couvre surtout le 01/09 au 10/09 ; il reste une traîne d'environ 1 100 transactions du 11 au 18/09, fins de tentatives probables. La traiter à part.
+  - La traîne est à environ 60 % illicite : la date seule y « prédit » l'étiquette (fuite si elle est mélangée au test).
+  - `Patterns.txt` ne couvre que 3 209 des 5 177 transactions illicites (62 %) : le reste n'a pas de typologie. Mesurer le rappel aussi hors motifs.
+  - Les codes banque de `accounts.csv` (`Bank ID`) n'ont pas de zéros en tête, contrairement à ceux de `Trans.csv` : normaliser avant toute jointure.
+  - `Is Laundering` et `Patterns.txt` sont des **étiquettes** : elles servent à l'entraînement et à l'évaluation, jamais comme feature.
+- Tout fichier dérivé (sous `data/`, hors `raw/`) doit être régénérable par un script du dépôt.
+- Toute source externe (listes GAFI, taux de change…) doit être documentée (URL, licence, date, usage) dans `data/SOURCES.md` **avant** utilisation.
 
-## Arborescence cible
-```
-aml/                  paquet Python (seul __init__.py existe aujourd'hui)
-  prepare.py          CSV → parquet trié, typé, comptes (banque, compte), conversion en USD       TODO (source perdue, .pyc seulement)
-  stream.py           simulateur de rejeu : itère les tx dans l'ordre temporel, vitesse réglable (×N, max), fenêtre de dates
-  state.py            état par compte à mémoire bornée : fenêtres glissantes, LRU et TTL, compteurs fixes
-  features.py         features incrémentales par compte et motifs de graphe bornés                 TODO (source perdue)
-  rules.py            règles explicables → motifs de soupçon rattachés aux 8 typologies
-  model.py            chargement et inférence GBDT (LightGBM natif ou ONNX Runtime), contributions par feature
-  train.py            entraînement hors ligne sur le split temporel, export du modèle                TODO (source perdue)
-  evaluate.py         métriques, choix du seuil sur la validation, baselines → results/
-  alerts.py           fusion score, règles et typologie → alerte priorisée et regroupement par compte ou motif
-  report/
-    tracfin.py        construction du dossier structuré (faits injectés par le code)
-    template.md.j2    rapport 100 % template (repli sans LLM)
-    narrative.py      narration LLM optionnelle (llama.cpp), qui ne reçoit que des faits déjà calculés
-scripts/
-  get_data.sh         téléchargement des données (existe)
-  bench.py            benchmark de frugalité → results/bench_<machine>.json
-  demo.sh             démo de bout en bout
-tests/                pytest sur de petits échantillons synthétiques et extraits
-results/              métriques et benchmarks VERSIONNÉS (JSON ou CSV + date + commit + machine)
-artifacts/            modèles entraînés (.txt LightGBM, .onnx) : non committés, regénérés par train.py
-```
+## Environnement local (non versionné)
+- `source env.sh` : active `.venv` (Python 3.12.15) et définit `$LLAMA_CPU`, `$LLAMA_CUDA`, `$LLAMA_ARM64`, `$MODELS` et `$QEMU_LD_PREFIX`.
+- `tools/` : llama.cpp compilé en portable (`GGML_NATIVE=OFF`) pour x86, CUDA et aarch64 ; cross-compilation aarch64 (`tools/aarch64.cmake`) et qemu pour tester sur ARM.
+- `models/` : GGUF quantifiés (Qwen3.5 0.8B, 2B et 4B ; LFM2.5 350M et 1.2B ; Gemma-4-E2B).
+- `.venv` contient déjà notamment : numpy, polars, pyarrow, pandas, scikit-learn, lightgbm 4.7, onnx, onnxruntime, networkx, psutil, jinja2, llama_cpp_python et pytest.
+  Il contient aussi torch et transformers, réservés à l'expérimentation : **jamais** dans le chemin d'inférence livré.
+- Outils : `ruff` (lint et format), `basedpyright` (types).
 
-## Commandes
-```bash
-source env.sh                                    # venv Python 3.12, llama.cpp dans le PATH, $MODELS, $LLAMA_ARM64, $QEMU_LD_PREFIX
-scripts/get_data.sh                              # HI-Small → data/raw/ (autres variantes : scripts/get_data.sh LI-Small ...)
-python -m aml.prepare --variant HI-Small         # TODO : CSV → data/prep/
-python -m aml.train --variant HI-Small           # TODO : → artifacts/
-python -m aml.evaluate --variant HI-Small        # TODO : → results/metrics.json
-python scripts/bench.py --threads 4              # TODO : → results/bench_<host>.json
-python -m aml.stream --speed 1000 --from 2022-09-08 --alerts-out alerts.jsonl   # TODO : démo en flux
-python -m aml.report --alert <id> [--llm $MODELS/qwen3.5-0.8b/Qwen3.5-0.8B-Q4_K_M.gguf]  # TODO : sans --llm, template seul
-pytest -q                                        # tests (tâche VS Code « pytest »)
-```
-LLM (déjà installés) : `llama-server -m $MODELS/<modèle>.gguf -t 4 --port 8080` (CPU x86), `$LLAMA_CUDA` (GPU),
-et sur ARM via qemu : `cd $LLAMA_ARM64 && qemu-aarch64 -L $QEMU_LD_PREFIX ./llama-completion -m <gguf> -p "..."`.
-GGUF disponibles dans `models/` : Qwen3.5 0.8B, 2B et 4B (Q4_K_M et Q8_0), LFM2.5 350M (Q8_0), LFM2.5 1.2B (Q4_K_M et Q8_0), Gemma-4-E2B (q4_0).
-Choix du modèle : à faire **par mesure** (qualité du texte et latence sur la cible) ; prioriser les modèles de 0,35 à 1,2 B pour l'OrangePi.
+## Principes non négociables
+1. **Détection 100 % algorithmique**, sans LLM (statistiques, graphe, règles, modèle classique).
+2. **Le LLM a deux rôles, et seulement deux** : rédiger le rapport TRACFIN, et l'assistant d'analyse qui répond aux questions de l'analyste sur une alerte.
+   - Il ne reçoit que des faits déjà calculés et ne répond qu'à partir du dossier de l'alerte.
+   - Il n'écrit **jamais** un montant, une date ou un identifiant : le code les injecte. Tout texte généré qui contient un nombre absent des faits est rejeté.
+   - Un repli **sans LLM** (templates) doit toujours fonctionner.
+3. **Flux causal** : le traitement d'une transaction n'utilise que les transactions antérieures. Aucune information du futur, aucune étiquette.
+4. **Mémoire bornée** en inférence : rien qui charge tout le dataset, un état de taille contrôlée, un objectif de RAM compatible avec 4 GB (et bien en dessous).
+5. **Chaque alerte se justifie** : raisons lisibles par un humain (règles, indicateurs, typologie), pas seulement un score.
 
-## Principes d'architecture
-1. **Algorithmique d'abord.** Le LLM ne fait que la narration. Il ne produit **jamais** de montant, de date ni d'identifiant :
-   le code les injecte (placeholders remplis après génération, ou texte du LLM entre des blocs factuels).
-   Vérification après génération : rejeter et retomber sur le template si le texte contient un nombre ou un identifiant absent des faits.
-   Le repli 100 % template doit toujours fonctionner (`--no-llm` par défaut dans les tests).
-2. **Flux, incrémental, mémoire bornée** (objectif : bien moins de 1 GB de RSS en inférence). Aucun chargement complet du dataset en inférence.
-   Lecture en morceaux, état par compte de taille fixe, éviction LRU ou TTL, voisinages de graphe tronqués (degré maximum, profondeur au plus 3, fenêtre temporelle).
-3. **Features** par compte sur fenêtres glissantes (1 h, 24 h, 7 j) : nombre, somme et moyenne des montants en USD, degrés entrant et sortant, contreparties distinctes,
-   devises, banques et formats distincts, part en espèces, Bitcoin ou ACH, montants ronds, délai de rebond (entrée → sortie),
-   ratio sortie/entrée. Motifs bornés : fan-in, fan-out, cycles courts, gather-scatter, scatter-gather.
-4. **Modèle** : LightGBM 4.7 (installé ; XGBoost absent), petit nombre d'arbres et de feuilles, export ONNX (TODO : `onnxmltools` absent, sinon `model.txt` natif ou code C).
-   Contributions par alerte : `pred_contrib=True` (SHAP pour les arbres, natif LightGBM).
-5. **Règles** : chaque règle a un identifiant, un libellé métier en français, la typologie visée et les seuils ; l'alerte liste les règles déclenchées et les 5 premières contributions.
-6. **Rapport TRACFIN** : rubriques inspirées des informations publiques de TRACFIN (tracfin.gouv.fr, déclaration de soupçon via ERMES) :
-   déclarant (fictif), personnes et comptes concernés, opérations (tableau), motifs du soupçon (typologie, règles, indicateurs),
-   analyse narrative, éléments chiffrés et pièces. Citer la source consultée dans le rapport et dans `data/SOURCES.md` ; ne pas inventer d'obligations légales.
+## Rigueur d'évaluation
+- Découpage **temporel** (train, validation, test), jamais aléatoire ; traîne du 11 au 18/09 évaluée à part. Les bornes sont à décider et à consigner ci-dessous.
+- Seuil, hyperparamètres et calibration sont choisis **sur la validation uniquement** ; le test n'est regardé qu'une fois la configuration figée.
+- Métriques sur la classe illicite : précision, rappel, F1, PR-AUC, précision@k (k = capacité quotidienne d'un analyste),
+  et taux de tentatives détectées **par typologie**.
+- Toujours comparer à des baselines (au minimum : règles seules, modèle sans features de graphe).
+- Tester l'absence de fuite : aucune feature dérivée des étiquettes, aucune statistique calculée sur la validation ou le test.
+- Tout chiffre cité (README, slides, conversation) provient d'un script relançable qui l'écrit dans un fichier versionné, avec la date, le commit, la seed et la machine.
 
-## Évaluation (rigueur)
-- **Split temporel**, jamais aléatoire. Proposition, à valider puis à consigner dans « Décisions prises » :
-  train 01→06/09, val 07→08/09, test 09→10/09 ; traîne 11→18/09 : métriques à part (pas mélangée au test).
-- L'état du flux est **causal** : les features d'une tx n'utilisent que les tx antérieures (ordre trié). Le préchauffage sur les jours précédents est permis, mais aucune étiquette n'est utilisée.
-- Contrôles anti-fuite (tests) : aucune feature dérivée de `Is Laundering` ou de Patterns ; pas de statistique globale calculée sur val ou test ;
-  seuil, hyperparamètres et calibration choisis **sur la validation uniquement**.
-- Métriques (classe illicite) : précision, rappel, F1, PR-AUC, précision@k (k = capacité de l'analyste par jour), et
-  **taux de tentatives détectées** par typologie (au moins une tx alertée par tentative de Patterns).
-- Baselines obligatoires : règles seules ; GBDT sans features de graphe ; GBDT complet.
-- Chaque exécution écrit dans `results/` : métriques, seed, commit git, variante des données et date.
+## Frugalité : mesurée, jamais estimée
+- Mesures : latence par transaction (p50 et p99), débit, RAM maximale (RSS), taille sur disque (modèle et état), latence d'un rapport avec et sans LLM ; nombre de threads fixé.
+- Énergie : RAPL sur x86 si lisible, `tegrastats` sur Jetson, wattmètre sur l'OrangePi ; sinon écrire « non mesuré ».
+- Sous qemu, on vérifie la **portabilité**, jamais les performances.
 
-## Frugalité (mesurée, pas estimée)
-- `scripts/bench.py` : latence par tx p50 et p99 (`time.perf_counter_ns`), débit (tx/s), RSS maximale (`psutil` ou `resource.getrusage`),
-  taille sur disque (modèle, état), latence de génération d'un rapport avec et sans LLM, nombre de threads fixé.
-- Énergie : RAPL (`/sys/class/powercap/intel-rapl*`) sur x86 si lisible, `tegrastats` sur Jetson, wattmètre externe sur l'OrangePi. Sinon, écrire « non mesuré ».
-- Résultats dans `results/bench_<hostname>.json` (versionné). Sous qemu, mesurer la **portabilité** seulement, jamais les performances.
-
-## Conventions de code
-- Python 3.12 (vérifié : 3.12.15 dans `.venv`). Le code doit rester compatible avec 3.10 et plus s'il est lancé sur la cible ARM.
-- Dépendances d'inférence minimales et disponibles en wheels aarch64 : `numpy`, `pyarrow` ou `polars`, `lightgbm` ou `onnxruntime`, `jinja2`, `psutil`.
-  `torch`, `transformers` et CUDA sont **interdits** dans le chemin d'inférence. LLM via le binaire `llama-server` (HTTP) ou `llama_cpp` ; import optionnel avec repli.
-  TODO : `requirements.txt` (inférence) et `requirements-dev.txt` (entraînement, tests).
-- Pas d'instructions spécifiques à un CPU (pas de `-march=native`, pas d'intrinsèques) ; les accélérations GPU ou NPU restent optionnelles et détectées à l'exécution, avec repli CPU.
-- Chemins relatifs à la racine du dépôt (`Path(__file__).resolve().parents[n]`) ou fournis en argument ; aucun chemin absolu.
-- Seed fixée (`SEED = 42`) pour numpy, LightGBM et l'échantillonnage. Déterminisme (`deterministic=True`, `num_threads` fixé).
-- Lint : `ruff check . && ruff format .` ; types : basedpyright. Montants en `float64`, comparaisons de montants en USD.
-- Langue : identifiants en anglais, messages, libellés de règles et rapports en français.
+## Conventions
+- Python compatible 3.10 et plus. Dépendances d'inférence minimales et disponibles en wheels aarch64.
+- Chemins relatifs à la racine du dépôt ou passés en argument ; aucun chemin absolu.
+- Seed fixée (42) et exécutions déterministes (threads fixés).
+- Identifiants de code en anglais ; libellés d'alerte, rapports et messages en français.
+- `ruff check . && ruff format .` avant de proposer un commit.
 
 ## Règles de travail pour Claude
-- **Mesurer avant d'optimiser** ; ne jamais citer un chiffre qui n'a pas été reproduit par un script du dépôt (indiquer le fichier de `results/`).
-- Tester d'abord sur un **échantillon** (par exemple 1 jour ou 100 k tx, `--limit`) avant le dataset complet ; surveiller la RAM (`/usr/bin/time -v`).
-- Vérifier la portabilité ARM : wheels aarch64 des dépendances, code C ou C++ cross-compilé avec `tools/aarch64.cmake` et exécuté sous `qemu-aarch64`.
-- Ne jamais committer `data/`, `models/`, `artifacts/`, `*.gguf`, `*.onnx`, `*.bin`, `.venv/`, `tools/` (déjà dans `.gitignore`, sauf `artifacts/` : TODO l'ajouter).
-- Documenter toute source externe (URL, licence, date) avant de l'utiliser.
-- Ne pas supprimer ni écraser `data/prep/*` sans le dire. Plusieurs sessions Claude peuvent travailler en parallèle : vérifier `git status` avant d'éditer.
-- Pas de commit sans demande explicite. Mettre à jour ce fichier quand une commande passe de TODO à opérationnelle.
-
-## Priorités du hackathon
-1. **Bout en bout d'abord** : prepare → stream → features → règles → modèle → alerte → rapport template, même avec des scores faibles.
-2. **Scores** : features de graphe, réglage sur la validation, baselines, métriques par typologie.
-3. **Frugalité** : bench sur x86 puis sur ARM, réduction (moins d'arbres, ONNX, quantification de l'état).
-4. **Démo et présentation** : script de démo, 2 ou 3 rapports exemplaires, slides alimentées par `results/`.
-
-Checklist des livrables :
-- [ ] `aml.prepare` (code source restauré) et `data/SOURCES.md`
-- [ ] Simulateur de flux `aml.stream` à mémoire bornée
-- [ ] Features incrémentales et motifs de graphe bornés
-- [ ] Règles rattachées aux 8 typologies
-- [ ] Modèle LightGBM entraîné sur le split temporel, exporté (txt ou ONNX)
-- [ ] `results/metrics.json` : modèle, baselines, par typologie, traîne 11→18/09
-- [ ] Rapport de type TRACFIN : template sans LLM et narration LLM avec garde-fou sur les nombres
-- [ ] `scripts/bench.py` et `results/bench_<host>.json` (x86, plus ARM si possible)
-- [ ] Démo `scripts/demo.sh` qui tourne sur CPU seul
-- [ ] Présentation de 15 min, chaque chiffre relié à un fichier de `results/`
+- **Ne pas coder sans validation** de l'approche par l'utilisateur ; proposer d'abord, brièvement, en rattachant la proposition à la grille.
+- Mesurer avant d'optimiser. Ne jamais annoncer un résultat non reproduit ; si un test échoue ou une étape est sautée, le dire.
+- Travailler d'abord sur un **échantillon** (un jour, ou environ 100 k transactions), puis sur le dataset complet ; surveiller la RAM (`/usr/bin/time -v`).
+- Vérifier la portabilité ARM dès qu'une dépendance ou du code natif est ajouté.
+- Ne jamais committer `data/`, `models/`, `tools/`, `.venv/`, `env.sh`, `.vscode/`, `.env`, `*.gguf`, `*.onnx`, `*.bin` (voir `.gitignore`).
+  Seule exception : `artifacts/*.onnx`, pour le modèle livré.
+- Pas de commit ni de push sans demande explicite. Vérifier `git status` avant d'éditer : d'autres sessions peuvent travailler en parallèle.
+- Ne rien supprimer sous `data/` sans le dire.
 
 ## Décisions prises
 Format : `AAAA-MM-JJ : décision. Raison (critère de la grille).`
-- 2026-10-26 : sujet AML sur IBM AML HI-Small. Raison : pertinence métier (25 %) et faisable en 2 jours.
-- 2026-10-26 : GBDT et règles pour la détection, LLM limité à la narration avec repli template. Raison : frugalité (20 %), explicabilité (15 %).
-- 2026-10-26 : LightGBM plutôt que XGBoost (déjà installé, contributions natives, modèle compact). Raison : frugalité, explicabilité.
-- 2026-10-26 : llama.cpp compilé en portable (`GGML_NATIVE=OFF`, backends dynamiques) pour x86, CUDA et aarch64. Raison : portabilité imposée.
-- À trancher : bornes exactes du split, modèle GGUF retenu, format d'export (txt, ONNX ou C), k de précision@k.
+- 2026-10-26 : sujet AML sur IBM AML HI-Small. Raison : pertinence métier, et détection faisable de façon algorithmique.
+- 2026-10-26 : détection sans LLM ; LLM limité à la rédaction du rapport et à l'assistant d'analyse, avec repli sans LLM. Raison : frugalité, explicabilité, pertinence métier.
+- 2026-10-26 : données hors git, récupérées via `scripts/get_data.sh` (GitHub refuse les fichiers de plus de 100 MB).
+- À trancher : architecture, bornes du découpage temporel, modèle de détection, modèle GGUF, valeur de k pour la précision@k.
