@@ -1,0 +1,77 @@
+# Projet de déclaration de soupçon : alerte {{ alert.alert_id }}
+
+> Document généré automatiquement, **à valider par un analyste conformité** avant toute transmission.
+> Inspiré du contenu d'une déclaration de soupçon TRACFIN ; données synthétiques (IBM AML).
+
+| | |
+|---|---|
+| Date de l'alerte | {{ F.triggered_at }} |
+| Rang de priorité du jour | {{ F.priority_rank }} |
+| Score de risque (règles) | {{ F.score }} |
+| Typologie | **{{ typ.name }}**{% if typ.kickoff_name %} ({{ typ.kickoff_name }}){% endif %} |
+
+## 1. Déclarant
+
+Établissement : [à compléter] · Service conformité : [à compléter] · Correspondant TRACFIN : [à compléter]
+
+## 2. Personnes et comptes concernés
+
+- Compte principal : `{{ F.subject }}`
+{% if kyc %}- Banque : {{ kyc.bank_name }}
+- Titulaire (entité) : {{ kyc.entity_name }} (identifiant `{{ kyc.entity_id }}`)
+- Autres comptes connus de la même entité : {{ F.n_other_accounts }}{% for a in kyc.other_accounts %}{% if loop.first %} ({% endif %}`{{ a.key() }}`{% if not loop.last %}, {% else %}){% endif %}{% endfor %}
+{% else %}- Titulaire : non trouvé dans le référentiel des comptes
+{% endif %}- Contreparties distinctes dans les opérations signalées : {{ F.n_counterparties }}
+
+## 3. Synthèse du soupçon
+
+{{ text.synthesis }}
+
+## 4. Description des opérations
+
+Opérations signalées : {{ F.n_tx }}, du {{ F.first_ts }} au {{ F.last_ts }} (durée : {{ F.span_minutes }}).
+Moyens de paiement : {{ F.formats }}.
+
+Montants par devise :
+{% for f in totals %}- {{ f.text }}
+{% endfor %}- Équivalent estimé : {{ F.total_usd_estimate }} (taux de change estimés sur les données d'entraînement)
+- Opération la plus importante : {{ F.max_tx }}
+
+| N° | Date | Émetteur | Bénéficiaire | Montant payé | Montant reçu | Moyen |
+|---|---|---|---|---|---|---|
+{% for t in rows %}| {{ t.tx_id }}{% if t.flag %} ⚑{% endif %} | {{ t.ts }} | `{{ t.src }}` | `{{ t.dst }}` | {{ t.paid }} | {{ t.received }} | {{ t.format }} |
+{% endfor %}
+⚑ : opération retenue par l'alerte ; les autres lignes sont l'activité du compte dans les 24 h précédentes.
+
+## 5. Analyse et motifs du soupçon
+
+{{ text.analysis }}
+
+Indicateurs déclenchés :
+{% for r in reasons %}- {{ r }}
+{% endfor %}{% if F.n_self_fx != "0" %}- Élément complémentaire : {{ F.n_self_fx }} auto-virement(s) avec changement de devise dans les 24 h précédentes.
+{% endif %}
+## 6. Limites de l'analyse
+
+- Aucune information de connaissance client (KYC) au-delà du référentiel des comptes.
+- Les équivalents en dollars reposent sur des taux estimés à partir des données, non sur une source officielle.
+- La détection repose sur des règles : une alerte n'est pas une preuve de blanchiment.
+
+## 7. Suite proposée
+
+{% for c in typ.checks %}- {{ c }}
+{% endfor %}- Décider, après examen, de l'opportunité d'une déclaration à TRACFIN.
+
+## 8. Traçabilité
+
+- Détecteur : {{ alert.detector_name }} {{ alert.detector_version }} ; codes : {% for r in alert.reasons %}`{{ r.code }}`{% if not loop.last %}, {% endif %}{% endfor %}
+- Rédaction : {{ writer_name }} ; garde-fou numérique : {{ guard_status }}
+- Données considérées jusqu'au : {{ F.triggered_at }} (aucune donnée postérieure)
+
+<details><summary>Faits calculés ({{ facts|length }})</summary>
+
+| Id | Clé | Valeur |
+|---|---|---|
+{% for f in facts %}| {{ f.id }} | {{ f.key }} | {{ f.text }} |
+{% endfor %}
+</details>

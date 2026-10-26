@@ -1,0 +1,14 @@
+# Dépendances du périmètre « dossier d'alerte et rapport » (sans LLM).
+# Versions relevées dans le .venv d'Anas (Python 3.13.3) le 2026-10-26.
+# Installation : python -m pip install -r requirements-report.txt
+
+# Inférence (chemin livré)
+polars==2.1.0
+pyarrow==26.0.0
+jinja2==3.1.6
+markupsafe==3.0.4  # dépendance de jinja2, épinglée pour la reproductibilité
+
+# Développement
+pytest==9.1.1
+
+# LLM : rien pour l'instant (llama-cpp-python viendra à l'étape 5, après validation).

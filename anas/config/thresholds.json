@@ -1,0 +1,16 @@
+{
+  "window_h": 24.0,
+  "fan_out": 7,
+  "fan_in": 3,
+  "chain_depth": 2,
+  "chain_min_ratio": 0.8,
+  "structuring_limit_usd": 10000.0,
+  "structuring_band": 0.1,
+  "structuring_count": 1,
+  "dormant_gap_h": 24,
+  "dormant_min_usd": 10000.0,
+  "cooldown_h": 24.0,
+  "risky_formats": [
+    "ACH"
+  ]
+}
