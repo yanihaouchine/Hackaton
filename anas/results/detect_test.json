@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "date": "2026-10-26T17:41:21+00:00",
+    "commit": "6e40abb",
+    "dirty": false,
+    "seed": 42,
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "cpu_count": 4,
+    "python": "3.13.3",
+    "threads_detection": 1
+  },
+  "split": "test",
+  "period": [
+    "2022-09-08T00:00:00",
+    "2022-09-11T00:00:00"
+  ],
+  "warmup_h": 72,
+  "n_tx_replayed": 2793055,
+  "seconds": 45.87,
+  "throughput_tx_s": 60888,
+  "latency_us_p50": 8.41,
+  "latency_us_p99": 21.38,
+  "max_rss_mb": 1348,
+  "state_at_end": {
+    "accounts_known": 378195,
+    "windows_out": 114805,
+    "windows_in": 138407,
+    "window_items": 676589,
+    "chains": 136304
+  },
+  "n_alerts": 16802,
+  "alerts_by_typology": {
+    "fan_in": 8491,
+    "fan_out": 1570,
+    "structuring": 3532,
+    "dormant": 961,
+    "rapid_chain": 2187,
+    "gather_scatter": 61
+  }
+}

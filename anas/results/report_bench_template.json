@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "date": "2026-10-26T17:41:26+00:00",
+    "commit": "6e40abb",
+    "dirty": false,
+    "seed": 42,
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "cpu_count": 4,
+    "python": "3.13.3",
+    "threads_detection": 1
+  },
+  "writer": "template",
+  "n_reports": 20,
+  "dossier_plus_render_ms_p50": 1.92,
+  "dossier_plus_render_ms_p99": 16.13,
+  "fetch_ms_p50": 56.18,
+  "fetch_ms_p99": 67.39,
+  "max_rss_mb": 268
+}

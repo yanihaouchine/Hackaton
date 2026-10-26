@@ -1,0 +1,144 @@
+{
+  "meta": {
+    "date": "2026-10-26T17:40:35+00:00",
+    "commit": "6e40abb",
+    "dirty": false,
+    "seed": 42,
+    "machine": "x86_64",
+    "processor": "x86_64",
+    "cpu_count": 4,
+    "python": "3.13.3",
+    "threads_detection": 1
+  },
+  "split": "val",
+  "period": [
+    "2022-09-06T00:00:00",
+    "2022-09-08T00:00:00"
+  ],
+  "n_tx": 964840,
+  "n_alerts": 9401,
+  "alerts_per_day": 4700.5,
+  "alert_precision": 0.02680565897244974,
+  "precision_at_k": {
+    "k": 50,
+    "mean_over_days": 0.02
+  },
+  "transactions": {
+    "precision": 0.010387601182418433,
+    "recall": 0.3657587548638132,
+    "f1": 0.02020147750167898,
+    "pr_auc": 0.0051336790403124525,
+    "n_flagged": 36197,
+    "n_positives": 1028,
+    "prevalence": 0.0010654616309439908
+  },
+  "recall_outside_patterns": 0.2222222222222222,
+  "alerts_by_typology": {
+    "dormant": {
+      "n_alerts": 580,
+      "precision": 0.02586206896551724
+    },
+    "fan_in": {
+      "n_alerts": 3826,
+      "precision": 0.030318870883429168
+    },
+    "fan_out": {
+      "n_alerts": 997,
+      "precision": 0.013039117352056168
+    },
+    "gather_scatter": {
+      "n_alerts": 17,
+      "precision": 0.0
+    },
+    "rapid_chain": {
+      "n_alerts": 1552,
+      "precision": 0.04574742268041237
+    },
+    "structuring": {
+      "n_alerts": 2429,
+      "precision": 0.015232606010703994
+    }
+  },
+  "attempts_detected_by_typology": {
+    "bipartite": {
+      "attempts": 10,
+      "detected": 6,
+      "rate": 0.6
+    },
+    "cycle": {
+      "attempts": 25,
+      "detected": 16,
+      "rate": 0.64
+    },
+    "fan_in": {
+      "attempts": 17,
+      "detected": 14,
+      "rate": 0.8235294117647058
+    },
+    "fan_out": {
+      "attempts": 23,
+      "detected": 11,
+      "rate": 0.4782608695652174
+    },
+    "gather_scatter": {
+      "attempts": 22,
+      "detected": 16,
+      "rate": 0.7272727272727273
+    },
+    "random": {
+      "attempts": 18,
+      "detected": 12,
+      "rate": 0.6666666666666666
+    },
+    "scatter_gather": {
+      "attempts": 24,
+      "detected": 17,
+      "rate": 0.7083333333333334
+    },
+    "stack": {
+      "attempts": 25,
+      "detected": 15,
+      "rate": 0.6
+    }
+  },
+  "baselines": {
+    "random_precision": 0.0010654616309439908,
+    "ach_only": {
+      "precision": 0.007640993500862832,
+      "recall": 0.8657587548638133,
+      "f1": 0.015148291562061192
+    },
+    "each_typology_alone": {
+      "dormant": {
+        "precision": 0.02586206896551724,
+        "recall": 0.014591439688715954,
+        "f1": 0.018656716417910446
+      },
+      "fan_in": {
+        "precision": 0.013682369111583156,
+        "recall": 0.2130350194552529,
+        "f1": 0.025713279323705526
+      },
+      "fan_out": {
+        "precision": 0.0032092916634828455,
+        "recall": 0.04085603112840467,
+        "f1": 0.005951115834218915
+      },
+      "gather_scatter": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "rapid_chain": {
+        "precision": 0.03787878787878788,
+        "recall": 0.10700389105058365,
+        "f1": 0.05595116988809765
+      },
+      "structuring": {
+        "precision": 0.009075300466028943,
+        "recall": 0.03599221789883268,
+        "f1": 0.014495592556317334
+      }
+    }
+  }
+}
