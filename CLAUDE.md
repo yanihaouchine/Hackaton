@@ -48,14 +48,6 @@ Grille de notation : chaque choix doit se rattacher à au moins une ligne.
 - Tout fichier dérivé (sous `data/`, hors `raw/`) doit être régénérable par un script du dépôt.
 - Toute source externe (listes GAFI, taux de change…) doit être documentée (URL, licence, date, usage) dans `data/SOURCES.md` **avant** utilisation.
 
-## Environnement local (non versionné)
-- `source env.sh` : active `.venv` (Python 3.12.15) et définit `$LLAMA_CPU`, `$LLAMA_CUDA`, `$LLAMA_ARM64`, `$MODELS` et `$QEMU_LD_PREFIX`.
-- `tools/` : llama.cpp compilé en portable (`GGML_NATIVE=OFF`) pour x86, CUDA et aarch64 ; cross-compilation aarch64 (`tools/aarch64.cmake`) et qemu pour tester sur ARM.
-- `models/` : GGUF quantifiés (Qwen3.5 0.8B, 2B et 4B ; LFM2.5 350M et 1.2B ; Gemma-4-E2B).
-- `.venv` contient déjà notamment : numpy, polars, pyarrow, pandas, scikit-learn, lightgbm 4.7, onnx, onnxruntime, networkx, psutil, jinja2, llama_cpp_python et pytest.
-  Il contient aussi torch et transformers, réservés à l'expérimentation : **jamais** dans le chemin d'inférence livré.
-- Outils : `ruff` (lint et format), `basedpyright` (types).
-
 ## Principes non négociables
 1. **Détection 100 % algorithmique**, sans LLM (statistiques, graphe, règles, modèle classique).
 2. **Le LLM a deux rôles, et seulement deux** : rédiger le rapport TRACFIN, et l'assistant d'analyse qui répond aux questions de l'analyste sur une alerte.
@@ -91,7 +83,7 @@ Grille de notation : chaque choix doit se rattacher à au moins une ligne.
 - **Ne pas coder sans validation** de l'approche par l'utilisateur ; proposer d'abord, brièvement, en rattachant la proposition à la grille.
 - Mesurer avant d'optimiser. Ne jamais annoncer un résultat non reproduit ; si un test échoue ou une étape est sautée, le dire.
 - Travailler d'abord sur un **échantillon** (un jour, ou environ 100 k transactions), puis sur le dataset complet ; surveiller la RAM (`/usr/bin/time -v`).
-- Vérifier la portabilité ARM dès qu'une dépendance ou du code natif est ajouté.
+- Vérifier la portabilité ARM dès qu'une dépendance ou du code natif est ajouté (outils qemu/aarch64 à réinstaller au besoin : voir « Environnement local »).
 - Ne jamais committer `data/`, `models/`, `tools/`, `.venv/`, `env.sh`, `.vscode/`, `.env`, `*.gguf`, `*.onnx`, `*.bin` (voir `.gitignore`).
   Seule exception : `artifacts/*.onnx`, pour le modèle livré.
 - Pas de commit ni de push sans demande explicite. Vérifier `git status` avant d'éditer : d'autres sessions peuvent travailler en parallèle.
@@ -99,7 +91,3 @@ Grille de notation : chaque choix doit se rattacher à au moins une ligne.
 
 ## Décisions prises
 Format : `AAAA-MM-JJ : décision. Raison (critère de la grille).`
-- 2026-10-26 : sujet AML sur IBM AML HI-Small. Raison : pertinence métier, et détection faisable de façon algorithmique.
-- 2026-10-26 : détection sans LLM ; LLM limité à la rédaction du rapport et à l'assistant d'analyse, avec repli sans LLM. Raison : frugalité, explicabilité, pertinence métier.
-- 2026-10-26 : données hors git, récupérées via `scripts/get_data.sh` (GitHub refuse les fichiers de plus de 100 MB).
-- À trancher : architecture, bornes du découpage temporel, modèle de détection, modèle GGUF, valeur de k pour la précision@k.
