@@ -11,6 +11,23 @@ Pour que la comparaison soit juste, le MLP utilise **exactement** :
 
 On ne copie pas ce code : `nn/data.py` **importe celui de `arbre/`**, en lecture seule. Si Yani corrige quelque chose, on en profite automatiquement.
 
+Ce dossier accueille aussi deux **livrables attendus par CGI**, indépendants du modèle de détection :
+- `rapport/` : le rapport inspiré de la déclaration de soupçon TRACFIN, généré à partir d'un dossier d'alerte (JSON) ;
+- `interface/` : l'interface de suivi des alertes pour la démo (à venir).
+
+Ils lisent seulement des **alertes et leurs raisons**, au format des dossiers de `arbre/` (`Reporter.facts`). Forêt, MLP ou combinaison : tout modèle qui produit ce format convient.
+
+## État des 6 livrables du kick-off (27/10, 15 h 45)
+
+| Livrable | Ce qui existe | Ce qui manque |
+|---|---|---|
+| Graphe des transactions visualisé | `arbre/aml/casegraph.py` : schéma SVG statique d'un cas, dans les pages HTML de la démo de Yani | une vue **interactive** dans l'interface (étape 3) |
+| Modèle de détection | `arbre/` : forêt strict + cascade, F1 test 0,653 ; `neurones/` : MLP, F1 test 0,606 (Youssef l'améliore) ; `anas/pipeline` : règles seules (archive) | le choix final du modèle (équipe) |
+| Alertes en temps réel | `arbre/aml/stream.py` (`Monitor.replay`) et `python -m aml demo` (tableau en direct dans le terminal) ; `rapport/make_alerts.py` rejoue une journée sans écrire dans `arbre/` | un affichage en direct dans l'interface (facultatif) |
+| Rapports générés automatiquement | `arbre/aml/report.py` (6 sections, LLM optionnel sous garde) ; **`neurones/rapport/`** (8 sections, sans LLM, garde-fou numérique, testé) | la version avec LLM de `neurones/rapport/` (étape 4) |
+| Interface de suivi des alertes | `arbre/` : pages HTML statiques (liste des cas, rapports) | une interface **interactive** avec décision de l'analyste (étape 3) |
+| Mesures de frugalité | `arbre/results/bench_*.json` (débit, latences, RAM, tailles) ; `neurones/results/bench_mlp_x86_64.json`, `rapport_bench.json` | l'énergie (wattmètre sur l'OrangePi, RAPL illisible ici) |
+
 ## 2. Ce qui est fait
 
 | Fichier | Rôle |
@@ -25,7 +42,11 @@ On ne copie pas ce code : `nn/data.py` **importe celui de `arbre/`**, en lecture
 | `scripts/bench.py` | taille, latence et débit du modèle seul : MLP contre forêt complète, et forêt avec cascade (configuration livrée par Yani). |
 | `scripts/evaluate.py` | évaluation **finale** sur le test, la traîne et le protocole littérature. Refuse de tourner deux fois. |
 | `scripts/plots.py` | images pour les slides, dans `results/figures/`. |
-| `tests/` | 13 tests : normalisation, absence de fuite, normalisation torch identique à numpy, explications. |
+| `tests/` | 23 tests : normalisation, absence de fuite, normalisation torch identique à numpy, explications, rapport. |
+| `rapport/make_alerts.py` | rejoue une journée en flux avec la détection de `arbre/` (lecture seule, sans étiquette) et écrit les dossiers des cas les plus prioritaires dans `data/neurones/alertes/<date>/`. |
+| `rapport/render.py`, `rapport/templates/rapport_tracfin.md.j2` | rapport **sans LLM** en 8 sections : identification du compte, résumé, typologie, motifs du soupçon, faits chiffrés, chronologie, comptes liés, recommandation. Le template **n'écrit aucun nombre** : il recopie les textes déjà formatés du dossier. |
+| `rapport/guard.py` | garde-fou : un rapport qui contient un nombre absent du dossier est **refusé**. |
+| `rapport/report.py` | génère le rapport d'un cas, ou de tous avec la mesure du temps. |
 
 ## 3. Résultats mesurés
 
@@ -86,17 +107,26 @@ Les raisons affichées portent donc bien la décision. Pour comparaison, la for�
 - `mlp_courbes.png` : loss (train et validation), accuracy (train et validation) et PR-AUC de validation, par epoch ;
 - `confusion_val.png`, `confusion_test.png` : MLP et forêt côte à côte.
 
+### Rapport TRACFIN (sans LLM)
+
+Journée du 09/09/2022 rejouée en flux avec la détection de `arbre/` : 654 467 transactions, 288 alertes, 158 cas, ce qui est identique à la démo publiée par Yani (`arbre/results/demo_2022-09-09.json`). Les 30 cas les plus prioritaires ont chacun leur rapport.
+Temps de génération d'un rapport : **0,51 ms** (p50), 5,9 ms (p99), sur 30 rapports ; garde-fou accepté pour les 30 (`results/rapport_bench.json`).
+
 ### Ressources de l'entraînement
 
 Entraînement complet (3 poids × seed 42, puis 2 seeds) : 5 min 20 s, RAM maximale 8,5 Go (préparation de l'entraînement, pas l'inférence).
 
 ## 4. Qui fait quoi, et ce qui reste
 
+Nouvelle répartition (27/10 après-midi) : Youssef et Anas ont chacun entraîné un MLP. **Youssef garde la partie modèle**,
+Anas passe aux **livrables attendus par CGI**, qui fonctionnent quel que soit le modèle retenu.
+
 | Qui | Fait | Reste à faire |
 |---|---|---|
-| Anas | données, modèle, entraînement, export ONNX, explications (`nn/explain.py`), matrices de confusion, mesures, images | slides « MLP contre forêt », répétition du pitch |
-| Youssef | — | **`nn/explain.py` est déjà fait, inutile de le refaire.** Pistes : brancher le MLP dans les rapports et la démo de `arbre/` (même format d'alertes et de raisons), mesurer sur l'OrangePi ou le Jetson, essayer un petit GNN si le temps le permet |
-| Ensemble | | Pull Request `neurones → main`, relue par Yani |
+| Youssef | son MLP | **toute la partie modèle** (`nn/`, `scripts/train.py`…) : l'améliorer, le comparer à celui d'Anas et à la forêt, avec le même protocole. `nn/explain.py` existe déjà : inutile de le refaire. |
+| Anas | premier MLP et ses mesures ; `rapport/` (rapport TRACFIN sans LLM, garde-fou, tests) | `interface/` (suivi des alertes, graphe, rapport, décision de l'analyste), puis le LLM qui reformule le rapport sous garde ; slides des livrables |
+| Yani | `arbre/` : détection, rapports, démo, mesures | relire la PR ; `arbre/` reste en lecture seule pour nous |
+| Ensemble | | choix du modèle final ; Pull Request `neurones → main`, relue par Yani |
 
 ## 5. Tout relancer, dans l'ordre
 
@@ -119,9 +149,14 @@ cd ../neurones
 ../.venv/bin/python scripts/evaluate.py           # TEST : UNE SEULE FOIS → results/eval_mlp_test.json
 ../.venv/bin/python scripts/confusion.py --test   # matrices du test → results/confusion.json
 ../.venv/bin/python scripts/plots.py              # → results/figures/*.png
+
+# Rapport TRACFIN (depuis neurones/), indépendant du modèle
+../.venv/bin/python -m rapport.make_alerts                # rejoue le 09/09 → data/neurones/alertes/2022-09-09/ (≈ 11 s)
+../.venv/bin/python -m rapport.report --case C08-0001     # → data/neurones/rapports/2022-09-09/C08-0001.md
+../.venv/bin/python -m rapport.report --all               # les 30 rapports + results/rapport_bench.json
 ```
 
-Dépendances (dans le `.venv` de la racine) : numpy, polars, torch (CPU, entraînement uniquement), onnx, onnxruntime, matplotlib.
+Dépendances (dans le `.venv` de la racine) : numpy, polars, torch (CPU, entraînement uniquement), onnx, onnxruntime, matplotlib, jinja2 (rapport).
 Les modèles (`artifacts/`) ne sont pas versionnés : ils se régénèrent avec `train.py`, puis `export.py`.
 
 **Règle d'or : le test ne s'évalue qu'une seule fois**, quand tout est figé. Le seuil, le poids des fraudes et l'arrêt précoce se choisissent **sur la validation uniquement**. `evaluate.py` refuse de réécrire `results/eval_mlp_test.json`. Relancer le test après avoir modifié le modèle, c'est tricher.

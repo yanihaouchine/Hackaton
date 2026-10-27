@@ -1,0 +1,267 @@
+{
+ "case_id": "C08-0002",
+ "generated": "27/10/2026 15:36",
+ "priority": 1.0,
+ "priority_pct": "> 99,9 %",
+ "priority_rank": 2,
+ "typology": {
+  "code": "GATHER-SCATTER",
+  "label": "Collecte puis dispersion (gather-scatter)",
+  "proba": 0.45499794573651237,
+  "proba_pct": "45 %"
+ },
+ "period": {
+  "start": "09/09/2022 05:18",
+  "end": "09/09/2022 17:03"
+ },
+ "totals": {
+  "n_ops": 4,
+  "n_accounts": 5,
+  "usd": 62956.810546875,
+  "usd_fmt": "62 956,81 USD"
+ },
+ "accounts": [
+  {
+   "id": "0224555:8110882E0",
+   "bank": "Spain Bank #439",
+   "country": "Spain",
+   "entity": "Sole Proprietorship #23645",
+   "entity_accounts": 7,
+   "role": "destinataire",
+   "n_ops": 1
+  },
+  {
+   "id": "01547:800360060",
+   "bank": "Italy Bank #49",
+   "country": "Italy",
+   "entity": "Sole Proprietorship #3072",
+   "entity_accounts": 340,
+   "role": "destinataire",
+   "n_ops": 1
+  },
+  {
+   "id": "0139342:80EB1E930",
+   "bank": "Switzerland Bank #51",
+   "country": "Switzerland",
+   "entity": "Corporation #2477",
+   "entity_accounts": 7,
+   "role": "émetteur",
+   "n_ops": 4
+  },
+  {
+   "id": "0117299:811C16680",
+   "bank": "Oasis Community Bank",
+   "country": "USA",
+   "entity": "Sole Proprietorship #20115",
+   "entity_accounts": 5,
+   "role": "destinataire",
+   "n_ops": 1
+  },
+  {
+   "id": "013083:80B91CD20",
+   "bank": "Italy Bank #17",
+   "country": "Italy",
+   "entity": "Sole Proprietorship #55144",
+   "entity_accounts": 4,
+   "role": "destinataire",
+   "n_ops": 1
+  }
+ ],
+ "operations": [
+  {
+   "index": 4370189,
+   "date": "09/09/2022 05:18",
+   "src": "0139342:80EB1E930",
+   "dst": "0224555:8110882E0",
+   "amount": 14635.16,
+   "currency": "EUR",
+   "amount_recv": 14635.16,
+   "currency_recv": "EUR",
+   "usd": 17149.23828125,
+   "format": "ACH",
+   "score_pct": "100,0 %",
+   "amount_fmt": "14 635,16",
+   "usd_fmt": "17 149,24"
+  },
+  {
+   "index": 4389483,
+   "date": "09/09/2022 06:01",
+   "src": "0139342:80EB1E930",
+   "dst": "01547:800360060",
+   "amount": 6398.44,
+   "currency": "EUR",
+   "amount_recv": 6398.44,
+   "currency_recv": "EUR",
+   "usd": 7497.5859375,
+   "format": "ACH",
+   "score_pct": "100,0 %",
+   "amount_fmt": "6 398,44",
+   "usd_fmt": "7 497,59"
+  },
+  {
+   "index": 4678441,
+   "date": "09/09/2022 16:51",
+   "src": "0139342:80EB1E930",
+   "dst": "013083:80B91CD20",
+   "amount": 15757.84,
+   "currency": "EUR",
+   "amount_recv": 15757.84,
+   "currency_recv": "EUR",
+   "usd": 18464.775390625,
+   "format": "ACH",
+   "score_pct": "100,0 %",
+   "amount_fmt": "15 757,84",
+   "usd_fmt": "18 464,78"
+  },
+  {
+   "index": 4683913,
+   "date": "09/09/2022 17:03",
+   "src": "0139342:80EB1E930",
+   "dst": "0117299:811C16680",
+   "amount": 19845.21,
+   "currency": "USD",
+   "amount_recv": 19845.21,
+   "currency_recv": "USD",
+   "usd": 19845.2109375,
+   "format": "ACH",
+   "score_pct": "99,9 %",
+   "amount_fmt": "19 845,21",
+   "usd_fmt": "19 845,21"
+  }
+ ],
+ "reasons": [
+  {
+   "feature": "f_best_err",
+   "family": "Conservation des flux",
+   "value": 0.0733494758605957,
+   "contribution": 4.231770832632807,
+   "percentile": NaN,
+   "text": "le montant est proche à 7,3 % près d'une somme reçue par l'émetteur",
+   "context": false,
+   "percentile_txt": ""
+  },
+  {
+   "feature": "p_cnt",
+   "family": "Relation",
+   "value": 0.0,
+   "contribution": 1.524925688560732,
+   "percentile": 0.25,
+   "text": "première relation entre ces deux comptes",
+   "context": false,
+   "percentile_txt": ""
+  },
+  {
+   "feature": "s_ach_out",
+   "family": "Comportement de l'émetteur",
+   "value": 1.0,
+   "contribution": 1.2522832335680534,
+   "percentile": 0.999,
+   "text": "100 % des envois de l'émetteur en ACH",
+   "context": false,
+   "percentile_txt": "valeur plus élevée que 99,9 % des transactions d'apprentissage"
+  },
+  {
+   "feature": "s_n_self",
+   "family": "Comportement de l'émetteur",
+   "value": 9.0,
+   "contribution": 0.9817329449309904,
+   "percentile": 0.98,
+   "text": "9 réinvestissements internes de l'émetteur",
+   "context": false,
+   "percentile_txt": "valeur plus élevée que 98,0 % des transactions d'apprentissage"
+  },
+  {
+   "feature": "s_ewc_out_m",
+   "family": "Comportement de l'émetteur",
+   "value": 1.245242953300476,
+   "contribution": 0.9155779382972447,
+   "percentile": 0.33863486199141335,
+   "text": "≈1,2 virements envoyés par l'émetteur sur 24 h (moyenne glissante)",
+   "context": false,
+   "percentile_txt": ""
+  },
+  {
+   "feature": "tx_log_usd",
+   "family": "Opération",
+   "value": 9.749767303466797,
+   "contribution": 1.9093285736616168,
+   "percentile": 0.8228750429117293,
+   "text": "montant de 17 149,24 USD",
+   "context": true,
+   "percentile_txt": ""
+  },
+  {
+   "feature": "tx_fmt",
+   "family": "Opération",
+   "value": 0.0,
+   "contribution": 1.1959564579938833,
+   "percentile": NaN,
+   "text": "moyen de paiement : ACH",
+   "context": true,
+   "percentile_txt": ""
+  },
+  {
+   "feature": "kyc_cross_border",
+   "family": "Connaissance client",
+   "value": 1.0,
+   "contribution": 0.7156636905049963,
+   "percentile": NaN,
+   "text": "transfert transfrontalier",
+   "context": true,
+   "percentile_txt": ""
+  }
+ ],
+ "indicators": [
+  {
+   "feature": "g_s_outdeg_l",
+   "value": 7.0,
+   "text": "éventail sortant : l'émetteur a payé 7 bénéficiaires distincts en 96 h"
+  },
+  {
+   "feature": "g_s_indeg_l",
+   "value": 5.0,
+   "text": "collecte puis dispersion : l'émetteur redistribue des fonds reçus de 5 émetteurs"
+  }
+ ],
+ "evidence": {
+  "fan_out_tx": [
+   2439679,
+   2862568,
+   2875945,
+   2903407,
+   3057472,
+   3966749,
+   4022820,
+   4370189
+  ],
+  "fan_out_distinct": 8,
+  "fan_in_tx": [
+   4370189
+  ],
+  "fan_in_distinct": 1,
+  "pass_through_trail": [
+   2531818
+  ],
+  "cycle_tx": [],
+  "scatter_gather_tx": []
+ },
+ "evidence_lines": [
+  "Chaîne de passage de 2 transferts de montants quasi identiques : `026463:80ED75AC0` → `0139342:80EB1E930` → `0224555:8110882E0` (15 977,31 USD puis 17 149,24 USD ; dernier relais en 3,7 j).",
+  "Le compte `0139342:80EB1E930` a payé 8 bénéficiaires distincts en 96 h (8 virements ACH)."
+ ],
+ "max_score_pct": "> 99,9 %",
+ "threshold_pct": "54,8 %",
+ "model": {
+  "name": "strict",
+  "method": "Saabas",
+  "mode": "strict",
+  "mode_label": "temps réel (score à l'arrivée)"
+ },
+ "narrative_note": "le texte d'analyse est produit par un modèle de phrases (sans LLM).",
+ "analysis_text": "Du 09/09/2022 05:18 au 09/09/2022 17:03, 5 comptes ont réalisé 4 opérations signalées pour un total de 62 956,81 USD. Le schéma observé est rapproché de la typologie « Collecte puis dispersion (gather-scatter) » (confiance 45 %). Les éléments les plus déterminants sont : le montant est proche à 7,3 % près d'une somme reçue par l'émetteur ; première relation entre ces deux comptes ; 100 % des envois de l'émetteur en ACH. Chaîne de passage de 2 transferts de montants quasi identiques : `026463:80ED75AC0` → `0139342:80EB1E930` → `0224555:8110882E0` (15 977,31 USD puis 17 149,24 USD ; dernier relais en 3,7 j). Ces éléments, inhabituels au regard de l'activité passée des comptes, justifient un examen approfondi et, le cas échéant, une déclaration de soupçon.",
+ "detector": {
+  "solution": "arbre/",
+  "model": "strict",
+  "cascade": true
+ }
+}
