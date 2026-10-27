@@ -1,0 +1,277 @@
+{
+  "run": {
+    "date": "2026-10-27T13:54:45+00:00",
+    "commit": "009a61a",
+    "dirty": true,
+    "seed": 45,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
+  },
+  "written": "2026-10-27T14:54:45",
+  "name": "h256-128_n100_s45",
+  "split": "val",
+  "config": {
+    "hidden": [
+      256,
+      128
+    ],
+    "neg_rate": 1.0,
+    "dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch": 4096,
+    "max_epochs": 30,
+    "patience": 5,
+    "threads": 4
+  },
+  "data": {
+    "train_rows": 3248921,
+    "train_pos": 2530,
+    "val_rows": 965524,
+    "n_inputs_raw": 96,
+    "n_inputs_net": 210
+  },
+  "n_params": 87041,
+  "best_epoch": 11,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.009145317883100523,
+      "val_pr_auc": 0.5165390334400671
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.003184804440131896,
+      "val_pr_auc": 0.5882277655008109
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.002921617526249768,
+      "val_pr_auc": 0.6002059294812183
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.002790398523611488,
+      "val_pr_auc": 0.6072188842857534
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.0026900052950016707,
+      "val_pr_auc": 0.6045754355716809
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.0026112858830086637,
+      "val_pr_auc": 0.6194129927084776
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.0025801508682756313,
+      "val_pr_auc": 0.6219428815724226
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.002523562093187108,
+      "val_pr_auc": 0.6082548934177503
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.0024611426911396624,
+      "val_pr_auc": 0.6144106951766194
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.002429098481218315,
+      "val_pr_auc": 0.6254431206646032
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.002371836527259403,
+      "val_pr_auc": 0.6284239427806615
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.002316357335606193,
+      "val_pr_auc": 0.610160562639218
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.002254851576401633,
+      "val_pr_auc": 0.6234349836709607
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.0021885109014283624,
+      "val_pr_auc": 0.6118195635214662
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.002154580180914289,
+      "val_pr_auc": 0.6148129363737455
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.002063595235507938,
+      "val_pr_auc": 0.6195870438700585
+    }
+  ],
+  "seconds": {
+    "load": 1.7,
+    "train": 154.2,
+    "total": 158.6
+  },
+  "val": {
+    "tp": 546,
+    "fp": 107,
+    "fn": 490,
+    "n_alerts": 653,
+    "precision": 0.8361408882082695,
+    "recall": 0.527027027027027,
+    "f1": 0.6465364120781527,
+    "threshold": 0.43354856967926025,
+    "n_tx": 965524,
+    "n_pos": 1036,
+    "pr_auc": 0.628425407515927,
+    "f1_ci95": [
+      0.6186220756787003,
+      0.6713565239817865
+    ],
+    "p_at_k": [
+      {
+        "k": 10,
+        "precision_mean": 1.0,
+        "recall": 0.019305019305019305,
+        "n_days": 2
+      },
+      {
+        "k": 25,
+        "precision_mean": 0.98,
+        "recall": 0.0472972972972973,
+        "n_days": 2
+      },
+      {
+        "k": 50,
+        "precision_mean": 0.99,
+        "recall": 0.09555984555984556,
+        "n_days": 2
+      },
+      {
+        "k": 100,
+        "precision_mean": 0.995,
+        "recall": 0.1920849420849421,
+        "n_days": 2
+      },
+      {
+        "k": 200,
+        "precision_mean": 0.9724999999999999,
+        "recall": 0.3754826254826255,
+        "n_days": 2
+      },
+      {
+        "k": 500,
+        "precision_mean": 0.607,
+        "recall": 0.5859073359073359,
+        "n_days": 2
+      }
+    ],
+    "typology": {
+      "FAN-OUT": {
+        "attempts": 20,
+        "attempts_detected": 19,
+        "attempt_recall": 0.95,
+        "tx": 64,
+        "tx_recall": 0.90625,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 10
+      },
+      "FAN-IN": {
+        "attempts": 20,
+        "attempts_detected": 16,
+        "attempt_recall": 0.8,
+        "tx": 60,
+        "tx_recall": 0.75,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 11
+      },
+      "CYCLE": {
+        "attempts": 24,
+        "attempts_detected": 24,
+        "attempt_recall": 1.0,
+        "tx": 66,
+        "tx_recall": 0.9090909090909091,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 15
+      },
+      "GATHER-SCATTER": {
+        "attempts": 23,
+        "attempts_detected": 22,
+        "attempt_recall": 0.9565217391304348,
+        "tx": 96,
+        "tx_recall": 0.9166666666666666,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 20
+      },
+      "SCATTER-GATHER": {
+        "attempts": 21,
+        "attempts_detected": 20,
+        "attempt_recall": 0.9523809523809523,
+        "tx": 134,
+        "tx_recall": 0.8656716417910447,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 17
+      },
+      "BIPARTITE": {
+        "attempts": 9,
+        "attempts_detected": 9,
+        "attempt_recall": 1.0,
+        "tx": 49,
+        "tx_recall": 0.6122448979591837,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 8
+      },
+      "STACK": {
+        "attempts": 25,
+        "attempts_detected": 24,
+        "attempt_recall": 0.96,
+        "tx": 150,
+        "tx_recall": 0.7466666666666667,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 21
+      },
+      "RANDOM": {
+        "attempts": 15,
+        "attempts_detected": 14,
+        "attempt_recall": 0.9333333333333333,
+        "tx": 38,
+        "tx_recall": 0.8947368421052632,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 10
+      },
+      "_all_patterns": {
+        "tx": 657,
+        "tx_recall": 0.8264840182648402
+      },
+      "_non_pattern": {
+        "tx": 379,
+        "tx_recall": 0.0079155672823219
+      }
+    }
+  },
+  "export": {
+    "path": "artifacts/h256-128_n100_s45/model.onnx",
+    "bytes": 361481,
+    "max_abs_diff_ort_torch": 1.3542606325245288e-07
+  }
+}

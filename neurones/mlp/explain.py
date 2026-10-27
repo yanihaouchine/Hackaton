@@ -1,9 +1,10 @@
 """Raisons d'une alerte du MLP : contributions « gradient × entrée », au format des raisons de arbre/.
 
-TreeSHAP ne s'applique qu'aux arbres. Pour le réseau, la contribution d'une entrée normalisée z est
-∂logit/∂z × z : l'effet de l'entrée par rapport à la transaction moyenne du train (z = 0). Les colonnes
-one-hot d'une même feature sont additionnées, ce qui donne une contribution par feature du moteur. Les phrases
-françaises et les rangs (percentiles) viennent ensuite de `aml.explain.reasons` (arbre/, lecture seule).
+Méthode reprise de la v1 de neurones/ (commit 0c12204). TreeSHAP ne s'applique qu'aux arbres : pour le réseau,
+la contribution d'une entrée prétraitée z est ∂logit/∂z × z, l'effet de l'entrée par rapport à la transaction
+moyenne du train (z = 0 après standardisation). Les entrées issues d'une même feature du moteur (one-hot,
+indicateurs « absent » et « aucun appariement », sinus et cosinus de l'heure) sont additionnées : une
+contribution par feature du moteur. Les phrases françaises et les rangs viennent de `aml.explain.reasons`.
 """
 
 from __future__ import annotations
@@ -11,24 +12,32 @@ from __future__ import annotations
 import numpy as np
 import torch
 
-from nn.model import Scorer
+from mlp.train import Scorer
 
 
 def owners(scorer: Scorer) -> np.ndarray:
-    """Pour chaque entrée du réseau, l'indice de la feature brute (parmi les colonnes du modèle) dont elle vient."""
-    own = list(scorer.norm.num_idx.tolist())
-    for j, k in scorer.norm.cats:
-        own += [j] * k
+    """Pour chaque entrée du réseau, l'indice de la feature brute (parmi les colonnes du modèle) dont elle vient.
+
+    Même ordre que `Prep.forward` : numériques, indicateurs « absent », indicateurs « aucun appariement »,
+    one-hot, puis sinus et cosinus de l'heure.
+    """
+    p = scorer.net.prep
+    num = p.num_idx.numpy()
+    own = list(num) + list(num[p.miss_idx.numpy()]) + list(num[p.nomatch_idx.numpy()])
+    for j, size in p.cat:
+        own += [j] * size
+    own += [p.hour, p.hour]
     return np.array(own)
 
 
 def contributions(scorer: Scorer, x: np.ndarray) -> np.ndarray:
     """x : (n, colonnes du modèle) brutes → (n, colonnes du modèle) contributions au logit."""
-    z = scorer.norm(torch.from_numpy(np.asarray(x, dtype=np.float32))).detach().requires_grad_(True)
-    scorer.net(z).sum().backward()
+    net = scorer.net
+    z = net.prep(torch.from_numpy(np.asarray(x, dtype=np.float32))).detach().requires_grad_(True)
+    net.mlp(z).sum().backward()
     gz = (z.grad * z).detach().numpy()
     out = np.zeros((len(x), x.shape[1]))
-    np.add.at(out.T, owners(scorer), gz.T)  # somme des colonnes one-hot d'une même feature
+    np.add.at(out.T, owners(scorer), gz.T)
     return out
 
 

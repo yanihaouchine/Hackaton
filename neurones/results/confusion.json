@@ -1,24 +1,29 @@
 {
   "run": {
-    "date": "2026-10-27T14:05:11+00:00",
-    "commit": "e113345",
+    "date": "2026-10-27T15:02:24+00:00",
+    "commit": "0c12204",
     "dirty": true,
     "seed": 42,
     "machine": {
-      "hostname": "anas-HP-Laptop-15-dw3xxx",
-      "arch": "x86_64",
-      "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
-      "n_cpus": 4,
-      "python": "3.13.3"
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
     },
     "versions": {
       "numpy": "2.5.4",
-      "polars": "2.1.0"
-    }
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
   },
+  "written": "2026-10-27T16:02:24",
   "models": {
     "mlp": {
-      "threshold": 0.6189164569709209
+      "name": "h64-32_n100_s42",
+      "threshold": 0.2929190993309021
     },
     "forest": {
       "threshold": 0.8289875082247798
@@ -27,15 +32,15 @@
   "val": {
     "n_tx": 965524,
     "mlp": {
-      "VP": 523,
-      "FP": 106,
-      "FN": 513,
-      "VN": 964382,
-      "threshold": 0.6189164569709209,
-      "precision": 0.8314785373608903,
-      "recall": 0.5048262548262549,
-      "f1": 0.6282282282282282,
-      "accuracy": 0.9993588973448615,
+      "VP": 549,
+      "FP": 102,
+      "FN": 487,
+      "VN": 964386,
+      "threshold": 0.2929190993309021,
+      "precision": 0.8433179723502304,
+      "recall": 0.5299227799227799,
+      "f1": 0.6508595139300534,
+      "accuracy": 0.9993899685559344,
       "accuracy_always_licit": 0.9989270075109474
     },
     "forest": {
@@ -54,15 +59,15 @@
   "test": {
     "n_tx": 862792,
     "mlp": {
-      "VP": 483,
-      "FP": 154,
-      "FN": 473,
-      "VN": 861682,
-      "threshold": 0.6189164569709209,
-      "precision": 0.7582417582417582,
-      "recall": 0.5052301255230126,
-      "f1": 0.6064030131826743,
-      "accuracy": 0.999273289506625,
+      "VP": 508,
+      "FP": 176,
+      "FN": 448,
+      "VN": 861660,
+      "threshold": 0.2929190993309021,
+      "precision": 0.7426900584795322,
+      "recall": 0.5313807531380753,
+      "f1": 0.6195121951219513,
+      "accuracy": 0.9992767665903254,
       "accuracy_always_licit": 0.9988919693274857
     },
     "forest": {

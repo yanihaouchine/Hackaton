@@ -1,0 +1,267 @@
+{
+  "run": {
+    "date": "2026-10-27T13:57:02+00:00",
+    "commit": "009a61a",
+    "dirty": true,
+    "seed": 46,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
+  },
+  "written": "2026-10-27T14:57:02",
+  "name": "h256-128_n100_s46",
+  "split": "val",
+  "config": {
+    "hidden": [
+      256,
+      128
+    ],
+    "neg_rate": 1.0,
+    "dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch": 4096,
+    "max_epochs": 30,
+    "patience": 5,
+    "threads": 4
+  },
+  "data": {
+    "train_rows": 3248921,
+    "train_pos": 2530,
+    "val_rows": 965524,
+    "n_inputs_raw": 96,
+    "n_inputs_net": 210
+  },
+  "n_params": 87041,
+  "best_epoch": 9,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.011128665264986619,
+      "val_pr_auc": 0.4327121812035243
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.003194379444700321,
+      "val_pr_auc": 0.5803684373685647
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.0029219530194332945,
+      "val_pr_auc": 0.5891038030871063
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.0027823756317341642,
+      "val_pr_auc": 0.6205310342824226
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.002699225281953583,
+      "val_pr_auc": 0.6188472012434242
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.0026300913684580967,
+      "val_pr_auc": 0.6096298651949736
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.0025765241069143855,
+      "val_pr_auc": 0.6162027447219297
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.0025206523979249378,
+      "val_pr_auc": 0.6110741530279851
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.002479879041799114,
+      "val_pr_auc": 0.6310335543408
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.0024005177242854897,
+      "val_pr_auc": 0.6246256930893302
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.0023604209042941845,
+      "val_pr_auc": 0.62242902342204
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.0023183842205696313,
+      "val_pr_auc": 0.6134447302108428
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.0022598916257433087,
+      "val_pr_auc": 0.6225178333307542
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.0022060870042374947,
+      "val_pr_auc": 0.6222228666537218
+    }
+  ],
+  "seconds": {
+    "load": 1.7,
+    "train": 132.2,
+    "total": 136.7
+  },
+  "val": {
+    "tp": 553,
+    "fp": 114,
+    "fn": 483,
+    "n_alerts": 667,
+    "precision": 0.8290854572713643,
+    "recall": 0.5337837837837838,
+    "f1": 0.6494421608925425,
+    "threshold": 0.4320816993713379,
+    "n_tx": 965524,
+    "n_pos": 1036,
+    "pr_auc": 0.6310341509245351,
+    "f1_ci95": [
+      0.6216798431956551,
+      0.6752827290957125
+    ],
+    "p_at_k": [
+      {
+        "k": 10,
+        "precision_mean": 1.0,
+        "recall": 0.019305019305019305,
+        "n_days": 2
+      },
+      {
+        "k": 25,
+        "precision_mean": 1.0,
+        "recall": 0.04826254826254826,
+        "n_days": 2
+      },
+      {
+        "k": 50,
+        "precision_mean": 0.99,
+        "recall": 0.09555984555984556,
+        "n_days": 2
+      },
+      {
+        "k": 100,
+        "precision_mean": 0.995,
+        "recall": 0.1920849420849421,
+        "n_days": 2
+      },
+      {
+        "k": 200,
+        "precision_mean": 0.975,
+        "recall": 0.3764478764478765,
+        "n_days": 2
+      },
+      {
+        "k": 500,
+        "precision_mean": 0.612,
+        "recall": 0.5907335907335908,
+        "n_days": 2
+      }
+    ],
+    "typology": {
+      "FAN-OUT": {
+        "attempts": 20,
+        "attempts_detected": 19,
+        "attempt_recall": 0.95,
+        "tx": 64,
+        "tx_recall": 0.875,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 11
+      },
+      "FAN-IN": {
+        "attempts": 20,
+        "attempts_detected": 16,
+        "attempt_recall": 0.8,
+        "tx": 60,
+        "tx_recall": 0.8,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 11
+      },
+      "CYCLE": {
+        "attempts": 24,
+        "attempts_detected": 24,
+        "attempt_recall": 1.0,
+        "tx": 66,
+        "tx_recall": 0.9090909090909091,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 16
+      },
+      "GATHER-SCATTER": {
+        "attempts": 23,
+        "attempts_detected": 22,
+        "attempt_recall": 0.9565217391304348,
+        "tx": 96,
+        "tx_recall": 0.9479166666666666,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 20
+      },
+      "SCATTER-GATHER": {
+        "attempts": 21,
+        "attempts_detected": 20,
+        "attempt_recall": 0.9523809523809523,
+        "tx": 134,
+        "tx_recall": 0.8955223880597015,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 17
+      },
+      "BIPARTITE": {
+        "attempts": 9,
+        "attempts_detected": 9,
+        "attempt_recall": 1.0,
+        "tx": 49,
+        "tx_recall": 0.5918367346938775,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 8
+      },
+      "STACK": {
+        "attempts": 25,
+        "attempts_detected": 24,
+        "attempt_recall": 0.96,
+        "tx": 150,
+        "tx_recall": 0.7533333333333333,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 21
+      },
+      "RANDOM": {
+        "attempts": 15,
+        "attempts_detected": 14,
+        "attempt_recall": 0.9333333333333333,
+        "tx": 38,
+        "tx_recall": 0.8947368421052632,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 10
+      },
+      "_all_patterns": {
+        "tx": 657,
+        "tx_recall": 0.8386605783866058
+      },
+      "_non_pattern": {
+        "tx": 379,
+        "tx_recall": 0.005277044854881266
+      }
+    }
+  },
+  "export": {
+    "path": "artifacts/h256-128_n100_s46/model.onnx",
+    "bytes": 361481,
+    "max_abs_diff_ort_torch": 1.265004954120741e-07
+  }
+}

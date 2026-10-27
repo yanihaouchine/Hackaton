@@ -1,0 +1,262 @@
+{
+  "run": {
+    "date": "2026-10-27T13:52:07+00:00",
+    "commit": "009a61a",
+    "dirty": true,
+    "seed": 44,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
+  },
+  "written": "2026-10-27T14:52:07",
+  "name": "h256-128_n100_s44",
+  "split": "val",
+  "config": {
+    "hidden": [
+      256,
+      128
+    ],
+    "neg_rate": 1.0,
+    "dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch": 4096,
+    "max_epochs": 30,
+    "patience": 5,
+    "threads": 4
+  },
+  "data": {
+    "train_rows": 3248921,
+    "train_pos": 2530,
+    "val_rows": 965524,
+    "n_inputs_raw": 96,
+    "n_inputs_net": 210
+  },
+  "n_params": 87041,
+  "best_epoch": 8,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.010340175239482111,
+      "val_pr_auc": 0.4857267611230666
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.0032301035807757606,
+      "val_pr_auc": 0.5558684708459647
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.0030416555965026714,
+      "val_pr_auc": 0.5869845789315852
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.0028971349099381483,
+      "val_pr_auc": 0.5677255156053461
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.002723637638207203,
+      "val_pr_auc": 0.6089062430761336
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.0026354186545964114,
+      "val_pr_auc": 0.6271979949684805
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.002567924615901333,
+      "val_pr_auc": 0.6114084474678054
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.0025056158741604746,
+      "val_pr_auc": 0.6281534447919508
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.0024602553479814494,
+      "val_pr_auc": 0.6168898406706069
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.0024107516299624473,
+      "val_pr_auc": 0.6166571679600483
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.0023532871582096753,
+      "val_pr_auc": 0.5999836080034047
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.002329690485629954,
+      "val_pr_auc": 0.6197800428191412
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.0022687079616936206,
+      "val_pr_auc": 0.6267766252068679
+    }
+  ],
+  "seconds": {
+    "load": 1.7,
+    "train": 126.6,
+    "total": 131.0
+  },
+  "val": {
+    "tp": 579,
+    "fp": 166,
+    "fn": 457,
+    "n_alerts": 745,
+    "precision": 0.7771812080536913,
+    "recall": 0.5588803088803089,
+    "f1": 0.6501965188096576,
+    "threshold": 0.2676112651824951,
+    "n_tx": 965524,
+    "n_pos": 1036,
+    "pr_auc": 0.6281534447919508,
+    "f1_ci95": [
+      0.6217718133718133,
+      0.6742808157446251
+    ],
+    "p_at_k": [
+      {
+        "k": 10,
+        "precision_mean": 1.0,
+        "recall": 0.019305019305019305,
+        "n_days": 2
+      },
+      {
+        "k": 25,
+        "precision_mean": 1.0,
+        "recall": 0.04826254826254826,
+        "n_days": 2
+      },
+      {
+        "k": 50,
+        "precision_mean": 1.0,
+        "recall": 0.09652509652509653,
+        "n_days": 2
+      },
+      {
+        "k": 100,
+        "precision_mean": 0.99,
+        "recall": 0.19111969111969113,
+        "n_days": 2
+      },
+      {
+        "k": 200,
+        "precision_mean": 0.9624999999999999,
+        "recall": 0.3716216216216216,
+        "n_days": 2
+      },
+      {
+        "k": 500,
+        "precision_mean": 0.613,
+        "recall": 0.5916988416988417,
+        "n_days": 2
+      }
+    ],
+    "typology": {
+      "FAN-OUT": {
+        "attempts": 20,
+        "attempts_detected": 19,
+        "attempt_recall": 0.95,
+        "tx": 64,
+        "tx_recall": 0.9375,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 11
+      },
+      "FAN-IN": {
+        "attempts": 20,
+        "attempts_detected": 17,
+        "attempt_recall": 0.85,
+        "tx": 60,
+        "tx_recall": 0.8166666666666667,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 11
+      },
+      "CYCLE": {
+        "attempts": 24,
+        "attempts_detected": 24,
+        "attempt_recall": 1.0,
+        "tx": 66,
+        "tx_recall": 0.9545454545454546,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 17
+      },
+      "GATHER-SCATTER": {
+        "attempts": 23,
+        "attempts_detected": 22,
+        "attempt_recall": 0.9565217391304348,
+        "tx": 96,
+        "tx_recall": 0.9375,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 20
+      },
+      "SCATTER-GATHER": {
+        "attempts": 21,
+        "attempts_detected": 20,
+        "attempt_recall": 0.9523809523809523,
+        "tx": 134,
+        "tx_recall": 0.917910447761194,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 17
+      },
+      "BIPARTITE": {
+        "attempts": 9,
+        "attempts_detected": 9,
+        "attempt_recall": 1.0,
+        "tx": 49,
+        "tx_recall": 0.6326530612244898,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 8
+      },
+      "STACK": {
+        "attempts": 25,
+        "attempts_detected": 24,
+        "attempt_recall": 0.96,
+        "tx": 150,
+        "tx_recall": 0.8066666666666666,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 21
+      },
+      "RANDOM": {
+        "attempts": 15,
+        "attempts_detected": 14,
+        "attempt_recall": 0.9333333333333333,
+        "tx": 38,
+        "tx_recall": 0.868421052631579,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 10
+      },
+      "_all_patterns": {
+        "tx": 657,
+        "tx_recall": 0.867579908675799
+      },
+      "_non_pattern": {
+        "tx": 379,
+        "tx_recall": 0.023746701846965697
+      }
+    }
+  },
+  "export": {
+    "path": "artifacts/h256-128_n100_s44/model.onnx",
+    "bytes": 361481,
+    "max_abs_diff_ort_torch": 1.3591024128345452e-07
+  }
+}

@@ -1,0 +1,277 @@
+{
+  "run": {
+    "date": "2026-10-27T13:49:56+00:00",
+    "commit": "009a61a",
+    "dirty": true,
+    "seed": 43,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
+  },
+  "written": "2026-10-27T14:49:56",
+  "name": "h256-128_n100_s43",
+  "split": "val",
+  "config": {
+    "hidden": [
+      256,
+      128
+    ],
+    "neg_rate": 1.0,
+    "dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch": 4096,
+    "max_epochs": 30,
+    "patience": 5,
+    "threads": 4
+  },
+  "data": {
+    "train_rows": 3248921,
+    "train_pos": 2530,
+    "val_rows": 965524,
+    "n_inputs_raw": 96,
+    "n_inputs_net": 210
+  },
+  "n_params": 87041,
+  "best_epoch": 11,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.009567465750972668,
+      "val_pr_auc": 0.48731108329264144
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.0032256038997840937,
+      "val_pr_auc": 0.561144633638155
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.0030483345059493763,
+      "val_pr_auc": 0.577005774929508
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.002941136396868181,
+      "val_pr_auc": 0.5754838881076852
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.0028001359207669324,
+      "val_pr_auc": 0.6069059013201146
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.002668031628373871,
+      "val_pr_auc": 0.6124011241407518
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.0025856922821931192,
+      "val_pr_auc": 0.6221658248384407
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.0025375272695008734,
+      "val_pr_auc": 0.6163226111434426
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.0024493212358567204,
+      "val_pr_auc": 0.6215703655937869
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.002418938377917657,
+      "val_pr_auc": 0.6320346465672513
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.0023411649518328198,
+      "val_pr_auc": 0.6336064419624187
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.0023176915816297463,
+      "val_pr_auc": 0.6271162916759998
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.0022626619761910182,
+      "val_pr_auc": 0.6256522956150847
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.002193592232548282,
+      "val_pr_auc": 0.613588005981595
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.002162552828193983,
+      "val_pr_auc": 0.6135728244861062
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.002109137563934105,
+      "val_pr_auc": 0.6107252835338834
+    }
+  ],
+  "seconds": {
+    "load": 2.1,
+    "train": 152.9,
+    "total": 157.8
+  },
+  "val": {
+    "tp": 544,
+    "fp": 62,
+    "fn": 492,
+    "n_alerts": 606,
+    "precision": 0.8976897689768977,
+    "recall": 0.525096525096525,
+    "f1": 0.6626065773447014,
+    "threshold": 0.3625721037387848,
+    "n_tx": 965524,
+    "n_pos": 1036,
+    "pr_auc": 0.6336067968587861,
+    "f1_ci95": [
+      0.6358173076923077,
+      0.688787422733272
+    ],
+    "p_at_k": [
+      {
+        "k": 10,
+        "precision_mean": 1.0,
+        "recall": 0.019305019305019305,
+        "n_days": 2
+      },
+      {
+        "k": 25,
+        "precision_mean": 1.0,
+        "recall": 0.04826254826254826,
+        "n_days": 2
+      },
+      {
+        "k": 50,
+        "precision_mean": 1.0,
+        "recall": 0.09652509652509653,
+        "n_days": 2
+      },
+      {
+        "k": 100,
+        "precision_mean": 0.995,
+        "recall": 0.1920849420849421,
+        "n_days": 2
+      },
+      {
+        "k": 200,
+        "precision_mean": 0.98,
+        "recall": 0.3783783783783784,
+        "n_days": 2
+      },
+      {
+        "k": 500,
+        "precision_mean": 0.599,
+        "recall": 0.5781853281853282,
+        "n_days": 2
+      }
+    ],
+    "typology": {
+      "FAN-OUT": {
+        "attempts": 20,
+        "attempts_detected": 19,
+        "attempt_recall": 0.95,
+        "tx": 64,
+        "tx_recall": 0.890625,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 10
+      },
+      "FAN-IN": {
+        "attempts": 20,
+        "attempts_detected": 17,
+        "attempt_recall": 0.85,
+        "tx": 60,
+        "tx_recall": 0.7666666666666667,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 11
+      },
+      "CYCLE": {
+        "attempts": 24,
+        "attempts_detected": 23,
+        "attempt_recall": 0.9583333333333334,
+        "tx": 66,
+        "tx_recall": 0.8939393939393939,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 16
+      },
+      "GATHER-SCATTER": {
+        "attempts": 23,
+        "attempts_detected": 22,
+        "attempt_recall": 0.9565217391304348,
+        "tx": 96,
+        "tx_recall": 0.8958333333333334,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 20
+      },
+      "SCATTER-GATHER": {
+        "attempts": 21,
+        "attempts_detected": 20,
+        "attempt_recall": 0.9523809523809523,
+        "tx": 134,
+        "tx_recall": 0.8955223880597015,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 17
+      },
+      "BIPARTITE": {
+        "attempts": 9,
+        "attempts_detected": 8,
+        "attempt_recall": 0.8888888888888888,
+        "tx": 49,
+        "tx_recall": 0.5102040816326531,
+        "median_delay_h": 1.1583333333333334,
+        "detected_before_last_tx": 7
+      },
+      "STACK": {
+        "attempts": 25,
+        "attempts_detected": 24,
+        "attempt_recall": 0.96,
+        "tx": 150,
+        "tx_recall": 0.76,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 20
+      },
+      "RANDOM": {
+        "attempts": 15,
+        "attempts_detected": 14,
+        "attempt_recall": 0.9333333333333333,
+        "tx": 38,
+        "tx_recall": 0.9473684210526315,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 10
+      },
+      "_all_patterns": {
+        "tx": 657,
+        "tx_recall": 0.8264840182648402
+      },
+      "_non_pattern": {
+        "tx": 379,
+        "tx_recall": 0.002638522427440633
+      }
+    }
+  },
+  "export": {
+    "path": "artifacts/h256-128_n100_s43/model.onnx",
+    "bytes": 361481,
+    "max_abs_diff_ort_torch": 1.2819310768463765e-07
+  }
+}

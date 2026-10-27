@@ -1,100 +1,105 @@
 {
   "run": {
-    "date": "2026-10-27T14:03:44+00:00",
-    "commit": "e113345",
+    "date": "2026-10-27T15:00:58+00:00",
+    "commit": "0c12204",
     "dirty": true,
     "seed": 42,
     "machine": {
-      "hostname": "anas-HP-Laptop-15-dw3xxx",
-      "arch": "x86_64",
-      "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
-      "n_cpus": 4,
-      "python": "3.13.3"
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
     },
     "versions": {
       "numpy": "2.5.4",
-      "polars": "2.1.0"
-    }
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
   },
+  "written": "2026-10-27T16:00:58",
+  "model": "h64-32_n100_s42",
   "split": "val",
-  "method": "gradient × entrée (logit), one-hot regroupés",
+  "method": "gradient × entrée (logit), entrées d'une même feature regroupées",
   "faithfulness": {
     "1": {
       "k": 1,
-      "n_alerts": 629,
-      "share_below_threshold_after": 0.6772655007949125,
-      "median_score_drop": 0.6144311428070068,
-      "random_k_share_below_threshold": 0.04769475357710652,
+      "n_alerts": 652,
+      "share_below_threshold_after": 0.5061349693251533,
+      "median_score_drop": 0.41269075870513916,
+      "random_k_share_below_threshold": 0.046012269938650305,
       "random_k_median_score_drop": 0.0
     },
     "3": {
       "k": 3,
-      "n_alerts": 629,
-      "share_below_threshold_after": 0.9523052464228935,
-      "median_score_drop": 0.8771686553955078,
-      "random_k_share_below_threshold": 0.10492845786963434,
-      "random_k_median_score_drop": 0.0014965534210205078
+      "n_alerts": 652,
+      "share_below_threshold_after": 0.8650306748466258,
+      "median_score_drop": 0.8406199812889099,
+      "random_k_share_below_threshold": 0.12269938650306748,
+      "random_k_median_score_drop": 0.0010061860084533691
     },
     "5": {
       "k": 5,
-      "n_alerts": 629,
-      "share_below_threshold_after": 0.9952305246422893,
-      "median_score_drop": 0.9346950650215149,
-      "random_k_share_below_threshold": 0.18124006359300476,
-      "random_k_median_score_drop": 0.007837831974029541
+      "n_alerts": 652,
+      "share_below_threshold_after": 0.9662576687116564,
+      "median_score_drop": 0.922785758972168,
+      "random_k_share_below_threshold": 0.1579754601226994,
+      "random_k_median_score_drop": 0.006196498870849609
     }
   },
   "example": {
-    "tx_index": 3529759,
-    "proba": 0.999954342842102,
+    "tx_index": 3520428,
+    "score": 0.9999998807907104,
     "reasons": [
       {
-        "feature": "f_chain_age",
-        "text": "chaîne de transferts commencée il y a 2,1 j",
-        "contribution": 1.0736690759658813,
-        "percentile": NaN
+        "feature": "s_n_self",
+        "text": "11 réinvestissements internes de l'émetteur",
+        "contribution": 2.700281858444214,
+        "percentile": 0.99
       },
       {
-        "feature": "f_n_match10",
-        "text": "1 entrées récentes de l'émetteur à ±10 % de ce montant",
-        "contribution": 0.8522992730140686,
-        "percentile": 0.9944999999999999
+        "feature": "s_ach_out",
+        "text": "68 % des envois de l'émetteur en ACH",
+        "contribution": 2.101649194955826,
+        "percentile": 0.9904090905433351
       },
       {
-        "feature": "g_s_outdeg_m",
-        "text": "l'émetteur a payé 2 bénéficiaires distincts en 24 h (ACH)",
-        "contribution": 0.7817871570587158,
-        "percentile": 0.95
-      },
-      {
-        "feature": "m_sg",
-        "text": "6 intermédiaires relient une même source à ce destinataire (dispersion puis collecte)",
-        "contribution": 0.7453970909118652,
+        "feature": "g_s_outdeg_l",
+        "text": "l'émetteur a payé 11 bénéficiaires distincts en 96 h (ACH)",
+        "contribution": 2.0534043312072754,
         "percentile": 1.0
       },
       {
-        "feature": "f_n_match2",
-        "text": "1 entrées récentes de l'émetteur à ±2 % de ce montant",
-        "contribution": 0.6311588287353516,
+        "feature": "r_n_in",
+        "text": "32 réceptions antérieures du destinataire",
+        "contribution": 1.615357518196106,
+        "percentile": 0.9927
+      },
+      {
+        "feature": "r_n_out",
+        "text": "124 envois antérieurs du destinataire",
+        "contribution": 1.5423046350479126,
         "percentile": 1.0
       },
       {
         "feature": "kyc_cross_border",
         "text": "transfert transfrontalier",
-        "contribution": 1.1864819526672363,
+        "contribution": 2.7027060985565186,
         "percentile": NaN
       },
       {
         "feature": "tx_is_ach",
         "text": "virement ACH",
-        "contribution": 0.7540295124053955,
+        "contribution": 1.4309765100479126,
         "percentile": NaN
       },
       {
-        "feature": "tx_log_usd",
-        "text": "montant de 18 819,19 USD",
-        "contribution": 0.3793218731880188,
-        "percentile": 0.8296992686235037
+        "feature": "tx_cur",
+        "text": "devise : US Dollar",
+        "contribution": 0.8025107383728027,
+        "percentile": NaN
       }
     ]
   },

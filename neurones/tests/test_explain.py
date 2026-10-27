@@ -1,37 +1,39 @@
 import numpy as np
 import torch
+from test_prep import NAMES, sample
 
-from nn.data import fit_preprocessing
-from nn.explain import contributions, owners, to_engine_space
-from nn.model import Scorer, mlp
-
-NAMES = ["tx_log_usd", "tx_fmt", "s_age"]
+from mlp.explain import contributions, owners, to_engine_space
+from mlp.prep import fit_prep
+from mlp.train import Net, Scorer
 
 
-def scorer() -> Scorer:
-    rng = np.random.default_rng(0)
-    x = np.column_stack([rng.exponential(5, 100), rng.integers(0, 4, 100), rng.integers(-1, 900, 100)])
+def scorer(hidden=(8,)) -> Scorer:
     torch.manual_seed(0)
-    return Scorer(fit_preprocessing(x.astype(np.float32), NAMES), mlp(2 + 4)).eval()
+    return Scorer(Net(fit_prep(sample(), NAMES), hidden, 0.0), 1.0).eval()
 
 
-def test_one_contribution_per_raw_feature() -> None:
+def test_one_owner_per_network_input() -> None:
     s = scorer()
-    assert owners(s).tolist() == [0, 2, 1, 1, 1, 1]  # 2 numériques puis le one-hot de tx_fmt
-    c = contributions(s, np.array([[3.0, 2, 10], [1.0, 0, -1]], dtype=np.float32))
-    assert c.shape == (2, 3) and np.isfinite(c).all()
+    own = owners(s)
+    assert len(own) == s.net.prep.out_dim
+    assert set(own.tolist()) == set(range(len(NAMES)))  # chaque feature brute alimente au moins une entrée
+
+
+def test_contributions_shape_and_finite() -> None:
+    c = contributions(scorer(), sample(5, 1))
+    assert c.shape == (5, len(NAMES)) and np.isfinite(c).all()
 
 
 def test_linear_net_contribution_is_weight_times_input() -> None:
-    """Pour un réseau linéaire, gradient × entrée = poids × entrée normalisée (cas vérifiable à la main)."""
-    s = scorer()
-    s.net = torch.nn.Sequential(torch.nn.Linear(6, 1, bias=False))
-    w = s.net[0].weight.detach().numpy()[0]
-    x = np.array([[3.0, 2, 10]], dtype=np.float32)
-    z = s.norm(torch.from_numpy(x)).numpy()[0]
-    c = contributions(s, x)[0]
-    assert np.isclose(c[0], w[0] * z[0]) and np.isclose(c[2], w[1] * z[1])
-    assert np.isclose(c[1], w[4] * z[4])  # tx_fmt = 2 → seule la 3e colonne one-hot vaut 1
+    """Pour un réseau linéaire, gradient × entrée = somme des poids × entrées prétraitées d'une même feature."""
+    s = scorer(hidden=())
+    w = s.net.mlp[0].weight.detach().numpy()[0]
+    x = sample(1, 1)
+    with torch.no_grad():
+        z = s.net.prep(torch.from_numpy(x)).numpy()[0]
+    expected = np.zeros(len(NAMES))
+    np.add.at(expected, owners(s), w * z)
+    assert np.allclose(contributions(s, x)[0], expected, atol=1e-5)
 
 
 def test_engine_space_layout() -> None:

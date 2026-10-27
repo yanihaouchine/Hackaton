@@ -1,0 +1,51 @@
+{
+  "run": {
+    "date": "2026-10-27T14:53:25+00:00",
+    "commit": "0c12204",
+    "dirty": false,
+    "seed": 42,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
+  },
+  "written": "2026-10-27T15:53:25",
+  "threads": 1,
+  "energy": "non mesuré (powermetrics demande les droits administrateur sur macOS)",
+  "mlp_onnx": {
+    "model": "h64-32_n100_s42",
+    "file_bytes": 75777,
+    "load_ms": 3.0,
+    "latency_us_p50": 14.54,
+    "latency_us_p99": 18.21,
+    "throughput_tx_s": 1679995,
+    "max_rss_mb_process": 394
+  },
+  "forest_strict_arbre": {
+    "file_bytes": 1622291,
+    "n_trees": 1145,
+    "evaluator": "C (aml_forest_raw, structure préparée une fois), sans cascade",
+    "latency_us_p50": 321.5,
+    "latency_us_p99": 395.17,
+    "throughput_tx_s": 29182
+  },
+  "forest_strict_cascade_arbre": {
+    "file_bytes": 1632967,
+    "evaluator": "mini-forêt puis forêt complète au-delà du seuil (configuration temps réel livrée)",
+    "latency_us_p50": 3.67,
+    "latency_us_p99": 5.08,
+    "throughput_tx_s": 1598584,
+    "share_sent_to_full_forest": 0.00662
+  },
+  "note": "Coût du modèle seul ; le moteur de features C, commun aux deux, s'y ajoute."
+}

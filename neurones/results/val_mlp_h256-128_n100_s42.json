@@ -1,0 +1,262 @@
+{
+  "run": {
+    "date": "2026-10-27T13:47:18+00:00",
+    "commit": "009a61a",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
+  },
+  "written": "2026-10-27T14:47:18",
+  "name": "h256-128_n100_s42",
+  "split": "val",
+  "config": {
+    "hidden": [
+      256,
+      128
+    ],
+    "neg_rate": 1.0,
+    "dropout": 0.1,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "batch": 4096,
+    "max_epochs": 30,
+    "patience": 5,
+    "threads": 4
+  },
+  "data": {
+    "train_rows": 3248921,
+    "train_pos": 2530,
+    "val_rows": 965524,
+    "n_inputs_raw": 96,
+    "n_inputs_net": 210
+  },
+  "n_params": 87041,
+  "best_epoch": 8,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.010223890211094853,
+      "val_pr_auc": 0.501458984783324
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.003225696446120675,
+      "val_pr_auc": 0.5785249344563329
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.0030476303872727056,
+      "val_pr_auc": 0.5792182485565263
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.002945115589412107,
+      "val_pr_auc": 0.5876940832729686
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.0028372668930433088,
+      "val_pr_auc": 0.6042973171163232
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.0026943238863354367,
+      "val_pr_auc": 0.611010170928061
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.002592941229922756,
+      "val_pr_auc": 0.607598302880555
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.0025318246492424014,
+      "val_pr_auc": 0.6254765058612841
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.002474564421463022,
+      "val_pr_auc": 0.6163174009660841
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.0024253750567002214,
+      "val_pr_auc": 0.6204139516856468
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.002373667193208661,
+      "val_pr_auc": 0.6052766325520552
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.002319329956550575,
+      "val_pr_auc": 0.6161278910137362
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.002231367443052723,
+      "val_pr_auc": 0.6208382384452135
+    }
+  ],
+  "seconds": {
+    "load": 1.7,
+    "train": 128.0,
+    "total": 133.0
+  },
+  "val": {
+    "tp": 552,
+    "fp": 106,
+    "fn": 484,
+    "n_alerts": 658,
+    "precision": 0.8389057750759878,
+    "recall": 0.5328185328185329,
+    "f1": 0.6517119244391972,
+    "threshold": 0.3003515303134918,
+    "n_tx": 965524,
+    "n_pos": 1036,
+    "pr_auc": 0.6254765058612841,
+    "f1_ci95": [
+      0.6242898029045227,
+      0.6776349036235059
+    ],
+    "p_at_k": [
+      {
+        "k": 10,
+        "precision_mean": 0.95,
+        "recall": 0.01833976833976834,
+        "n_days": 2
+      },
+      {
+        "k": 25,
+        "precision_mean": 0.98,
+        "recall": 0.0472972972972973,
+        "n_days": 2
+      },
+      {
+        "k": 50,
+        "precision_mean": 0.99,
+        "recall": 0.09555984555984556,
+        "n_days": 2
+      },
+      {
+        "k": 100,
+        "precision_mean": 0.995,
+        "recall": 0.1920849420849421,
+        "n_days": 2
+      },
+      {
+        "k": 200,
+        "precision_mean": 0.9775,
+        "recall": 0.37741312741312744,
+        "n_days": 2
+      },
+      {
+        "k": 500,
+        "precision_mean": 0.597,
+        "recall": 0.5762548262548263,
+        "n_days": 2
+      }
+    ],
+    "typology": {
+      "FAN-OUT": {
+        "attempts": 20,
+        "attempts_detected": 19,
+        "attempt_recall": 0.95,
+        "tx": 64,
+        "tx_recall": 0.90625,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 10
+      },
+      "FAN-IN": {
+        "attempts": 20,
+        "attempts_detected": 16,
+        "attempt_recall": 0.8,
+        "tx": 60,
+        "tx_recall": 0.7666666666666667,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 11
+      },
+      "CYCLE": {
+        "attempts": 24,
+        "attempts_detected": 24,
+        "attempt_recall": 1.0,
+        "tx": 66,
+        "tx_recall": 0.9090909090909091,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 16
+      },
+      "GATHER-SCATTER": {
+        "attempts": 23,
+        "attempts_detected": 22,
+        "attempt_recall": 0.9565217391304348,
+        "tx": 96,
+        "tx_recall": 0.9270833333333334,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 20
+      },
+      "SCATTER-GATHER": {
+        "attempts": 21,
+        "attempts_detected": 20,
+        "attempt_recall": 0.9523809523809523,
+        "tx": 134,
+        "tx_recall": 0.8880597014925373,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 17
+      },
+      "BIPARTITE": {
+        "attempts": 9,
+        "attempts_detected": 9,
+        "attempt_recall": 1.0,
+        "tx": 49,
+        "tx_recall": 0.5918367346938775,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 8
+      },
+      "STACK": {
+        "attempts": 25,
+        "attempts_detected": 24,
+        "attempt_recall": 0.96,
+        "tx": 150,
+        "tx_recall": 0.76,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 21
+      },
+      "RANDOM": {
+        "attempts": 15,
+        "attempts_detected": 15,
+        "attempt_recall": 1.0,
+        "tx": 38,
+        "tx_recall": 0.8947368421052632,
+        "median_delay_h": 0.0,
+        "detected_before_last_tx": 10
+      },
+      "_all_patterns": {
+        "tx": 657,
+        "tx_recall": 0.8356164383561644
+      },
+      "_non_pattern": {
+        "tx": 379,
+        "tx_recall": 0.0079155672823219
+      }
+    }
+  },
+  "export": {
+    "path": "artifacts/h256-128_n100_s42/model.onnx",
+    "bytes": 361481,
+    "max_abs_diff_ort_torch": 1.3670960186118464e-07
+  }
+}

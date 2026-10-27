@@ -1,17 +1,15 @@
 """Images pour les slides, à partir des résultats déjà calculés (aucun calcul de modèle ici).
-- courbes d'entraînement du MLP retenu : loss (train, validation), accuracy (train, validation), PR-AUC de validation ;
+
+Repris de la v1 de neurones/ (commit 0c12204), même palette :
+- courbes d'entraînement du MLP livré : perte d'entraînement, PR-AUC de validation (critère d'arrêt précoce) ;
 - matrices de confusion MLP et forêt (validation ; test s'il a été évalué).
-Usage (depuis neurones/) : ../.venv/bin/python scripts/plots.py
-Sorties : results/figures/*.png
+Usage (depuis neurones/) : python -m mlp.plots [--model h64-32_n100_s42]  ->  results/figures/*.png
 """
 
 from __future__ import annotations
 
+import argparse
 import json
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import matplotlib
 
@@ -19,13 +17,12 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from nn.data import ARBRE, RESULTS
+from mlp.common import REPO, RESULTS
 
 FIG = RESULTS / "figures"
 # Palette de référence (validée : CVD ΔE 24,7, contraste ≥ 3:1 sur la surface claire)
 SURFACE, INK, INK2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
 TRAIN, VAL = "#2a78d6", "#eb6834"
-STOP_FR = {"val_loss": "loss de validation", "val_pr_auc": "PR-AUC de validation"}
 RAMP = ["#fcfcfb", "#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#0d366b"]  # bleu séquentiel, clair → foncé
 
 plt.rcParams.update({
@@ -41,30 +38,19 @@ def fr(x: float, nd: int = 3) -> str:
     return f"{x:.{nd}f}".replace(".", ",")
 
 
-def curves() -> None:
-    t = json.loads((RESULTS / "train_mlp.json").read_text(encoding="utf-8"))
-    run = t["seeds"][0]
-    c = run["curves"]
+def curves(model: str) -> None:
+    run = json.loads((RESULTS / f"val_mlp_{model}.json").read_text(encoding="utf-8"))
+    c = run["history"]
     ep = [r["epoch"] for r in c]
     best = run["best_epoch"]
-    forest_ap = json.loads((ARBRE / "artifacts/models/strict/model.json").read_text())["val_pr_auc"]
-    prevalence = json.loads((RESULTS / "data_summary.json").read_text())["splits"]["val"]["rate"]
+    forest_ap = json.loads((REPO / "arbre/artifacts/models/strict/model.json").read_text())["val_pr_auc"]
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.4))
-    panels = [
-        ("Loss (entropie croisée)", "train_loss", "val_loss"),
-        ("Accuracy au seuil 0,5", "train_accuracy", "val_accuracy"),
-    ]
-    for ax, (title, ktr, kva) in zip(axes[:2], panels, strict=True):
-        ax.plot(ep, [r[ktr] for r in c], color=TRAIN, marker="o", markersize=4, label="train")
-        ax.plot(ep, [r[kva] for r in c], color=VAL, marker="o", markersize=4, label="validation")
-        ax.set_title(title)
-        ax.legend(frameon=False, loc="best")
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.4))
+    ax = axes[0]
+    ax.plot(ep, [r["train_loss"] for r in c], color=TRAIN, marker="o", markersize=4, label="train")
+    ax.set_title("Perte d'entraînement (entropie croisée)")
+    ax.legend(frameon=False, loc="best")
     ax = axes[1]
-    ax.axhline(1 - prevalence, color=INK2, linestyle="--", linewidth=1.2)
-    ax.annotate(f"« toujours licite » : {fr(100 * (1 - prevalence), 2)} %", (ep[-1], 1 - prevalence),
-                xytext=(0, 6), textcoords="offset points", ha="right", color=INK2, fontsize=10)  # fmt: skip
-    ax = axes[2]
     ax.plot(ep, [r["val_pr_auc"] for r in c], color=VAL, marker="o", markersize=4, label="MLP, validation")
     ax.axhline(forest_ap, color=INK2, linestyle="--", linewidth=1.2)
     ax.annotate(f"forêt de arbre/ : {fr(forest_ap)}", (ep[0], forest_ap), xytext=(0, 6), textcoords="offset points",
@@ -74,11 +60,12 @@ def curves() -> None:
     ax.legend(frameon=False, loc="lower right")
     for ax in axes:
         ax.axvline(best, color=INK2, linewidth=1, linestyle=":")
-        ax.set_xlabel("epoch")
-    axes[0].annotate(f"epoch retenue ({best})", (best, axes[0].get_ylim()[1]), xytext=(4, -14),
+        ax.set_xlabel("époque")
+    axes[0].annotate(f"époque retenue ({best})", (best, axes[0].get_ylim()[1]), xytext=(4, -14),
                      textcoords="offset points", color=INK2, fontsize=10)  # fmt: skip
-    fig.suptitle(f"MLP : apprentissage (seed {run['seed']}, arrêt précoce sur la {STOP_FR[run['stop_on']]})",
-                 x=0.01, ha="left", fontsize=13, fontweight="bold")  # fmt: skip
+    seed = run["run"]["seed"]
+    fig.suptitle(f"MLP {model.split('_')[0][1:].replace('-', ' → ')} : apprentissage (seed {seed}, arrêt précoce "
+                 "sur la PR-AUC de validation)", x=0.01, ha="left", fontsize=13, fontweight="bold")  # fmt: skip
     fig.tight_layout()
     fig.savefig(FIG / "mlp_courbes.png", dpi=160)
     plt.close(fig)
@@ -122,8 +109,11 @@ def confusions() -> None:
 
 
 def main() -> None:
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--model", default="h64-32_n100_s42")
+    a = p.parse_args()
     FIG.mkdir(parents=True, exist_ok=True)
-    curves()
+    curves(a.model)
     confusions()
     print("\n".join(str(p.relative_to(RESULTS.parent)) for p in sorted(FIG.glob("*.png"))))
 
