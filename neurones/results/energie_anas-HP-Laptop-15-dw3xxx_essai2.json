@@ -1,0 +1,45 @@
+{
+  "run": {
+    "date": "2026-10-27T17:21:43+00:00",
+    "commit": "3da30be",
+    "dirty": false,
+    "seed": 42,
+    "machine": {
+      "hostname": "anas-HP-Laptop-15-dw3xxx",
+      "arch": "x86_64",
+      "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "n_cpus": 4,
+      "python": "3.13.3"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0"
+    }
+  },
+  "machine": "anas-HP-Laptop-15-dw3xxx",
+  "method": "RAPL, paquet CPU (package-0) ; énergie nette = brute − puissance au repos × durée ; 1 thread",
+  "idle": {
+    "seconds": 20.0,
+    "watts": 2.89
+  },
+  "detection": {
+    "date": "2022-09-09",
+    "n_tx": 654467,
+    "n_alerts": 288,
+    "seconds": 1.23,
+    "tx_per_s": 531410,
+    "joules_brut": 14.89,
+    "joules_net": 11.34,
+    "watts_moyens": 12.09,
+    "uj_net_par_tx": 17.321
+  },
+  "rapports_sans_llm": {
+    "n_rapports": 6000,
+    "seconds": 3.46,
+    "joules_brut": 39.54,
+    "joules_net": 29.56,
+    "watts_moyens": 11.44,
+    "mj_net_par_rapport": 4.9269
+  },
+  "rapports_avec_llm": "non mesuré : le LLM tourne sur le GPU de DeepEirb, hors de portée de RAPL"
+}

@@ -26,7 +26,7 @@ Ils lisent seulement des **alertes et leurs raisons**, au format des dossiers de
 | Alertes en temps réel | `arbre/aml/stream.py` (`Monitor.replay`) et `python -m aml demo` (tableau en direct dans le terminal) ; `rapport/make_alerts.py` rejoue une journée sans écrire dans `arbre/` | un affichage en direct dans l'interface (facultatif) |
 | Rapports générés automatiquement | `arbre/aml/report.py` (6 sections, LLM optionnel sous garde) ; **`neurones/rapport/`** (8 sections, garde-fou numérique, résumé reformulable par un LLM local sous garde, testé) | — |
 | Interface de suivi des alertes | `arbre/` : pages HTML statiques ; **`neurones/interface/`** : file triée par score, raisons, graphe, rapport, décision « Valider » ou « Classer sans suite » | — |
-| Mesures de frugalité | `arbre/results/bench_*.json` (débit, latences, RAM, tailles) ; `neurones/results/bench_arm64.json` (v1 : `results/v1/bench_mlp_x86_64.json`), `rapport_bench.json` | l'énergie (wattmètre sur l'OrangePi, RAPL illisible ici) |
+| Mesures de frugalité | `arbre/results/bench_*.json` (débit, latences, RAM, tailles) ; `neurones/results/bench_arm64.json` (v1 : `results/v1/bench_mlp_x86_64.json`), `rapport_bench.json` | l'énergie sur l'OrangePi (wattmètre) ; mesurée par RAPL sur le portable (`results/energie_*`) |
 
 ## 2. Ce qui est fait
 
@@ -125,6 +125,19 @@ Les raisons affichées portent la décision, mais un peu moins nettement qu'avec
 - `mlp_courbes.png` : perte d'entraînement et PR-AUC de validation par époque, avec l'époque retenue et la forêt en référence ;
 - `confusion_val.png`, `confusion_test.png` : MLP et forêt côte à côte.
 
+### Énergie (RAPL, portable Intel Core i3-1115G4, 27/10)
+
+Mesurée par le compteur d'énergie du processeur (RAPL), sur un seul thread. La consommation **au repos** (2,9 à 3,5 W) est retranchée, pour ne garder que l'énergie due au calcul. Deux essais, d'où une fourchette (le portable varie d'environ 15 % d'un essai à l'autre).
+
+| Travail mesuré | Durée | Énergie nette | Par unité |
+|---|---|---|---|
+| Détection en flux d'une journée (09/09 : 654 467 tx, 288 alertes ; forêt + cascade de `arbre/`) | 1,2 s | 11 à 13 J | **17 à 20 µJ par transaction** |
+| Rapports sans LLM (6 000 rapports) | 3,3 s | 30 à 36 J | **4,9 à 5,9 mJ par rapport** |
+| Rapports avec LLM | — | **non mesuré** (GPU de DeepEirb, hors de portée de RAPL) | — |
+
+Ordre de grandeur : détecter toute une journée de transactions coûte autant qu'une ampoule LED de 10 W allumée **à peine plus d'une seconde**.
+Sources : `results/energie_anas-HP-Laptop-15-dw3xxx_essai1.json` et `_essai2.json` ; script `mesures/energie.py` (capteur à débloquer : `sudo chmod o+r /sys/class/powercap/intel-rapl:0/energy_uj`).
+
 ### Rapport TRACFIN (sans LLM)
 
 Journée du 09/09/2022 rejouée en flux avec la détection de `arbre/` : 654 467 transactions, 288 alertes, 158 cas, ce qui est identique à la démo publiée par Yani (`arbre/results/demo_2022-09-09.json`). Les 30 cas les plus prioritaires ont chacun leur rapport.
@@ -186,6 +199,7 @@ for s in 43 44 45 46; do ../.venv/bin/python -m mlp.train --hidden 64,32 --neg-r
 ../.venv/bin/python -m rapport.make_alerts                # rejoue le 09/09 → data/neurones/alertes/2022-09-09/ (≈ 11 s)
 ../.venv/bin/python -m rapport.report --case C08-0001     # → data/neurones/rapports/2022-09-09/C08-0001.md
 ../.venv/bin/python -m rapport.report --all               # les 30 rapports + results/rapport_bench.json
+../.venv/bin/python -m mesures.energie                   # énergie RAPL → results/energie_<machine>.json (sudo chmod d'abord)
 # Avec LLM, sur une machine de l'école (Ollama) : dans un autre terminal, `/opt/ollama/bin/ollama serve`, puis
 ../.venv/bin/python -m rapport.report --all --llm --llm-model qwen3:1.7b   # → results/rapport_bench_llm_<modèle>_<machine>.json
 # Ou depuis le portable, LLM sur DeepEirb : ssh -N -J <login>@ssh.enseirb-matmeca.fr -L 11434:localhost:11434 <login>@deepeirb
