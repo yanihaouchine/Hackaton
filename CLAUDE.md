@@ -3,7 +3,7 @@
 Référence de toutes les sessions Claude Code sur ce dépôt. À tenir à jour, surtout « Décisions prises ».
 Le dépôt accueille plusieurs solutions, chacune dans son dossier avec son propre `CLAUDE.md` (architecture, décisions, chiffres) :
 - `arbre/` : moteur de features en C et forêt d'arbres (LightGBM) ; voir `arbre/CLAUDE.md`.
-- la solution par réseaux de neurones de l'équipe, dans son propre dossier.
+- `neurones/` : MLP sur les mêmes features, le même découpage et le même tirage que `arbre/`, pour comparaison ; voir `neurones/CLAUDE.md`.
 
 Ce fichier ne contient que ce qui est commun : sujet, grille, contraintes, données, principes et règles de travail.
 Ne pas modifier le dossier d'une autre solution sans le dire. Toute évolution d'architecture se propose avant d'être codée.

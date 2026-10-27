@@ -1,0 +1,27 @@
+{
+  "run": {
+    "date": "2026-10-27T14:02:06+00:00",
+    "commit": "e113345",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "anas-HP-Laptop-15-dw3xxx",
+      "arch": "x86_64",
+      "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "n_cpus": 4,
+      "python": "3.13.3"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0"
+    }
+  },
+  "onnx_bytes": 156203,
+  "n_params": 36609,
+  "opset": 17,
+  "n_inputs_raw": 96,
+  "threshold_logit": 0.4849516749382019,
+  "threshold_proba": 0.6189164569709209,
+  "check_rows": 20000,
+  "max_abs_diff_torch_vs_onnx": 1.3607703408524685e-07
+}

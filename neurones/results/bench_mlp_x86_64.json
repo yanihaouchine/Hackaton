@@ -1,0 +1,47 @@
+{
+  "run": {
+    "date": "2026-10-27T14:04:47+00:00",
+    "commit": "e113345",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "anas-HP-Laptop-15-dw3xxx",
+      "arch": "x86_64",
+      "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "n_cpus": 4,
+      "python": "3.13.3"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0"
+    }
+  },
+  "machine": "x86_64",
+  "threads": 1,
+  "energy": "non mesuré (RAPL illisible sans droits root sur cette machine)",
+  "mlp_onnx": {
+    "file_bytes": 156203,
+    "load_ms": 5.3,
+    "latency_us_p50": 25.56,
+    "latency_us_p99": 49.69,
+    "throughput_tx_s": 458903,
+    "max_rss_mb_process": 283
+  },
+  "forest_strict_arbre": {
+    "file_bytes": 1622291,
+    "n_trees": 1145,
+    "evaluator": "C (aml_forest_raw, structure préparée une fois), sans cascade",
+    "latency_us_p50": 748.06,
+    "latency_us_p99": 1084.65,
+    "throughput_tx_s": 17192
+  },
+  "forest_strict_cascade_arbre": {
+    "file_bytes": 1632967,
+    "evaluator": "mini-forêt puis forêt complète au-delà du seuil (configuration temps réel livrée)",
+    "latency_us_p50": 10.68,
+    "latency_us_p99": 34.63,
+    "throughput_tx_s": 950048,
+    "share_sent_to_full_forest": 0.00662
+  },
+  "note": "Coût du modèle seul ; le moteur de features C, commun aux deux, s'y ajoute."
+}

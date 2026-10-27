@@ -1,0 +1,105 @@
+{
+  "run": {
+    "date": "2026-10-27T14:05:11+00:00",
+    "commit": "e113345",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "anas-HP-Laptop-15-dw3xxx",
+      "arch": "x86_64",
+      "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "n_cpus": 4,
+      "python": "3.13.3"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0"
+    }
+  },
+  "models": {
+    "mlp": {
+      "threshold": 0.6189164569709209
+    },
+    "forest": {
+      "threshold": 0.8289875082247798
+    }
+  },
+  "val": {
+    "n_tx": 965524,
+    "mlp": {
+      "VP": 523,
+      "FP": 106,
+      "FN": 513,
+      "VN": 964382,
+      "threshold": 0.6189164569709209,
+      "precision": 0.8314785373608903,
+      "recall": 0.5048262548262549,
+      "f1": 0.6282282282282282,
+      "accuracy": 0.9993588973448615,
+      "accuracy_always_licit": 0.9989270075109474
+    },
+    "forest": {
+      "VP": 563,
+      "FP": 58,
+      "FN": 473,
+      "VN": 964430,
+      "threshold": 0.8289875082247798,
+      "precision": 0.9066022544283414,
+      "recall": 0.5434362934362934,
+      "f1": 0.6795413397706699,
+      "accuracy": 0.9994500395640088,
+      "accuracy_always_licit": 0.9989270075109474
+    }
+  },
+  "test": {
+    "n_tx": 862792,
+    "mlp": {
+      "VP": 483,
+      "FP": 154,
+      "FN": 473,
+      "VN": 861682,
+      "threshold": 0.6189164569709209,
+      "precision": 0.7582417582417582,
+      "recall": 0.5052301255230126,
+      "f1": 0.6064030131826743,
+      "accuracy": 0.999273289506625,
+      "accuracy_always_licit": 0.9988919693274857
+    },
+    "forest": {
+      "VP": 505,
+      "FP": 86,
+      "FN": 451,
+      "VN": 861750,
+      "threshold": 0.8289875082247798,
+      "precision": 0.8544839255499154,
+      "recall": 0.5282426778242678,
+      "f1": 0.6528765352294764,
+      "accuracy": 0.9993776020176358,
+      "accuracy_always_licit": 0.9988919693274857
+    }
+  },
+  "forest_check_val": {
+    "published": {
+      "tp": 563,
+      "fp": 58,
+      "fn": 473
+    },
+    "recomputed": [
+      563,
+      58,
+      473
+    ]
+  },
+  "forest_check_test": {
+    "published": {
+      "tp": 505,
+      "fp": 86,
+      "fn": 451
+    },
+    "recomputed": [
+      505,
+      86,
+      451
+    ]
+  }
+}

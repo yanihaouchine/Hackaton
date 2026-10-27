@@ -6,6 +6,7 @@ Sortie : results/bench_mlp_<machine>.json
 
 from __future__ import annotations
 
+import ctypes
 import json
 import platform
 import resource
@@ -47,8 +48,9 @@ def timed(fn, x: np.ndarray) -> dict:
 
 def main() -> None:
     import onnxruntime as ort
+    from aml.engine import load_lib
     from aml.forest import c_raw
-    from aml.model import load_bundle
+    from aml.model import load_bundle, load_cascade
     from aml.provenance import run_info
 
     ds = load()
@@ -66,7 +68,33 @@ def main() -> None:
     rss_mlp = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024
 
     bundle = load_bundle("strict")
-    forest = timed(lambda b: c_raw(bundle.forest, b), x_all)
+    # Structure C de la forêt préparée UNE fois (comme dans le moteur en ligne) ; c_raw la reconstruit à chaque appel.
+    lib, st = load_lib(), bundle.forest.to_c()
+
+    def forest_raw(b: np.ndarray) -> np.ndarray:
+        out = np.empty(len(b), dtype=np.float64)
+        lib.aml_forest_raw(ctypes.byref(st), b.ctypes.data_as(ctypes.POINTER(ctypes.c_float)), len(b), b.shape[1],
+                           out.ctypes.data_as(ctypes.POINTER(ctypes.c_double)))  # fmt: skip
+        return out
+
+    assert np.allclose(forest_raw(x_all[:1000]), c_raw(bundle.forest, x_all[:1000]))
+    forest = timed(forest_raw, x_all)
+
+    # Configuration livrée par arbre/ : cascade (mini-forêt de pré-filtrage, puis forêt complète si raw >= cut)
+    pre_forest, cut = load_cascade(bundle)
+    st_pre = pre_forest.to_c()
+
+    def cascade_raw(b: np.ndarray) -> np.ndarray:
+        r0 = np.empty(len(b), dtype=np.float64)
+        lib.aml_forest_raw(ctypes.byref(st_pre), b.ctypes.data_as(ctypes.POINTER(ctypes.c_float)), len(b),
+                           b.shape[1], r0.ctypes.data_as(ctypes.POINTER(ctypes.c_double)))  # fmt: skip
+        keep = np.flatnonzero(r0 >= cut)
+        if len(keep):
+            r0[keep] = forest_raw(np.ascontiguousarray(b[keep]))
+        return r0
+
+    passed = float(np.mean(c_raw(pre_forest, x_all) >= cut))
+    cascade = {**timed(cascade_raw, x_all), "share_sent_to_full_forest": passed}
 
     out = {
         "run": run_info(),
@@ -82,8 +110,13 @@ def main() -> None:
         "forest_strict_arbre": {
             "file_bytes": (bundle.path / "forest.amlz").stat().st_size,
             "n_trees": bundle.info.get("n_trees"),
-            "evaluator": "C (aml_forest_raw), sans cascade",
+            "evaluator": "C (aml_forest_raw, structure préparée une fois), sans cascade",
             **forest,
+        },
+        "forest_strict_cascade_arbre": {
+            "file_bytes": (bundle.path / "forest.amlz").stat().st_size + (bundle.path / "cascade.amlz").stat().st_size,
+            "evaluator": "mini-forêt puis forêt complète au-delà du seuil (configuration temps réel livrée)",
+            **cascade,
         },
         "note": "Coût du modèle seul ; le moteur de features C, commun aux deux, s'y ajoute.",
     }

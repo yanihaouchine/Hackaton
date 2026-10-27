@@ -1,0 +1,140 @@
+{
+  "run": {
+    "date": "2026-10-27T14:03:44+00:00",
+    "commit": "e113345",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "anas-HP-Laptop-15-dw3xxx",
+      "arch": "x86_64",
+      "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "n_cpus": 4,
+      "python": "3.13.3"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0"
+    }
+  },
+  "split": "val",
+  "method": "gradient × entrée (logit), one-hot regroupés",
+  "faithfulness": {
+    "1": {
+      "k": 1,
+      "n_alerts": 629,
+      "share_below_threshold_after": 0.6772655007949125,
+      "median_score_drop": 0.6144311428070068,
+      "random_k_share_below_threshold": 0.04769475357710652,
+      "random_k_median_score_drop": 0.0
+    },
+    "3": {
+      "k": 3,
+      "n_alerts": 629,
+      "share_below_threshold_after": 0.9523052464228935,
+      "median_score_drop": 0.8771686553955078,
+      "random_k_share_below_threshold": 0.10492845786963434,
+      "random_k_median_score_drop": 0.0014965534210205078
+    },
+    "5": {
+      "k": 5,
+      "n_alerts": 629,
+      "share_below_threshold_after": 0.9952305246422893,
+      "median_score_drop": 0.9346950650215149,
+      "random_k_share_below_threshold": 0.18124006359300476,
+      "random_k_median_score_drop": 0.007837831974029541
+    }
+  },
+  "example": {
+    "tx_index": 3529759,
+    "proba": 0.999954342842102,
+    "reasons": [
+      {
+        "feature": "f_chain_age",
+        "text": "chaîne de transferts commencée il y a 2,1 j",
+        "contribution": 1.0736690759658813,
+        "percentile": NaN
+      },
+      {
+        "feature": "f_n_match10",
+        "text": "1 entrées récentes de l'émetteur à ±10 % de ce montant",
+        "contribution": 0.8522992730140686,
+        "percentile": 0.9944999999999999
+      },
+      {
+        "feature": "g_s_outdeg_m",
+        "text": "l'émetteur a payé 2 bénéficiaires distincts en 24 h (ACH)",
+        "contribution": 0.7817871570587158,
+        "percentile": 0.95
+      },
+      {
+        "feature": "m_sg",
+        "text": "6 intermédiaires relient une même source à ce destinataire (dispersion puis collecte)",
+        "contribution": 0.7453970909118652,
+        "percentile": 1.0
+      },
+      {
+        "feature": "f_n_match2",
+        "text": "1 entrées récentes de l'émetteur à ±2 % de ce montant",
+        "contribution": 0.6311588287353516,
+        "percentile": 1.0
+      },
+      {
+        "feature": "kyc_cross_border",
+        "text": "transfert transfrontalier",
+        "contribution": 1.1864819526672363,
+        "percentile": NaN
+      },
+      {
+        "feature": "tx_is_ach",
+        "text": "virement ACH",
+        "contribution": 0.7540295124053955,
+        "percentile": NaN
+      },
+      {
+        "feature": "tx_log_usd",
+        "text": "montant de 18 819,19 USD",
+        "contribution": 0.3793218731880188,
+        "percentile": 0.8296992686235037
+      }
+    ]
+  },
+  "forest_explain_val": {
+    "run": {
+      "date": "2026-10-27T06:07:50+00:00",
+      "commit": "f5275cf",
+      "dirty": true,
+      "seed": 42,
+      "machine": {
+        "hostname": "ORC",
+        "arch": "x86_64",
+        "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+        "n_cpus": 16,
+        "python": "3.12.15"
+      },
+      "versions": {
+        "numpy": "2.5.4",
+        "polars": "2.1.0",
+        "lightgbm": "4.7.0"
+      }
+    },
+    "model": "strict",
+    "split": "val",
+    "method": "TreeSHAP",
+    "n_alerts": 621,
+    "faithfulness": {
+      "k": 3,
+      "n_alerts": 621,
+      "share_below_threshold_after": 0.998389694041868,
+      "median_score_drop": 0.9848267022326258
+    },
+    "indicator_coverage": 0.533011272141707,
+    "indicator_coverage_true_alerts": 0.5737122557726465,
+    "indicator_coverage_false_alerts": 0.13793103448275862,
+    "top_reason_family": {
+      "Opération": 568,
+      "Conservation des flux": 51,
+      "Comportement de l'émetteur": 1,
+      "Relation": 1
+    }
+  }
+}
