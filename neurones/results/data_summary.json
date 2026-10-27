@@ -1,0 +1,85 @@
+{
+  "run": {
+    "date": "2026-10-27T11:12:38+00:00",
+    "commit": "74678e5",
+    "dirty": false,
+    "seed": 42,
+    "machine": {
+      "hostname": "anas-HP-Laptop-15-dw3xxx",
+      "arch": "x86_64",
+      "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "n_cpus": 4,
+      "python": "3.13.3"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0"
+    }
+  },
+  "features_digest": "03a26672a4ef",
+  "n_features_engine": 104,
+  "n_features_model": 96,
+  "n_inputs_network": 220,
+  "one_hot": {
+    "tx_fmt": 7,
+    "tx_cur": 15,
+    "tx_hour": 24,
+    "tx_round": 6,
+    "kyc_s_etype": 6,
+    "kyc_r_etype": 6,
+    "kyc_s_country": 34,
+    "kyc_r_country": 34
+  },
+  "splits": {
+    "train": {
+      "rows": [
+        0,
+        3248921
+      ],
+      "n_tx": 3248921,
+      "n_illicit": 2530,
+      "rate": 0.0007787200735259491
+    },
+    "val": {
+      "rows": [
+        3248921,
+        4214445
+      ],
+      "n_tx": 965524,
+      "n_illicit": 1036,
+      "rate": 0.0010729924890525767
+    },
+    "test": {
+      "rows": [
+        4214445,
+        5077237
+      ],
+      "n_tx": 862792,
+      "n_illicit": 956,
+      "rate": 0.0011080306725143488
+    },
+    "tail": {
+      "rows": [
+        5077237,
+        5078345
+      ],
+      "n_tx": 1108,
+      "n_illicit": 655,
+      "rate": 0.5911552346570397
+    }
+  },
+  "train_sample": {
+    "n_rows": 814479,
+    "n_illicit": 2530,
+    "seed": 42
+  },
+  "check_transformed": {
+    "finite": true,
+    "shape": [
+      1000,
+      220
+    ]
+  },
+  "seconds": 12.34,
+  "max_rss_mb": 2738
+}
