@@ -13,7 +13,7 @@ On ne copie pas ce code : `nn/data.py` **importe celui de `arbre/`**, en lecture
 
 Ce dossier accueille aussi deux **livrables attendus par CGI**, indépendants du modèle de détection :
 - `rapport/` : le rapport inspiré de la déclaration de soupçon TRACFIN, généré à partir d'un dossier d'alerte (JSON) ;
-- `interface/` : l'interface de suivi des alertes pour la démo (à venir).
+- `interface/` : l'interface de suivi des alertes pour la démo (Streamlit, hors du chemin de détection).
 
 Ils lisent seulement des **alertes et leurs raisons**, au format des dossiers de `arbre/` (`Reporter.facts`). Forêt, MLP ou combinaison : tout modèle qui produit ce format convient.
 
@@ -21,11 +21,11 @@ Ils lisent seulement des **alertes et leurs raisons**, au format des dossiers de
 
 | Livrable | Ce qui existe | Ce qui manque |
 |---|---|---|
-| Graphe des transactions visualisé | `arbre/aml/casegraph.py` : schéma SVG statique d'un cas, dans les pages HTML de la démo de Yani | une vue **interactive** dans l'interface (étape 3) |
+| Graphe des transactions visualisé | `arbre/aml/casegraph.py` : schéma SVG statique d'un cas (démo de Yani) ; **`neurones/interface/`** : graphe des comptes de chaque cas, compte principal en évidence | — |
 | Modèle de détection | `arbre/` : forêt strict + cascade, F1 test 0,653 ; `neurones/` : MLP, F1 test 0,606 (Youssef l'améliore) ; `anas/pipeline` : règles seules (archive) | le choix final du modèle (équipe) |
 | Alertes en temps réel | `arbre/aml/stream.py` (`Monitor.replay`) et `python -m aml demo` (tableau en direct dans le terminal) ; `rapport/make_alerts.py` rejoue une journée sans écrire dans `arbre/` | un affichage en direct dans l'interface (facultatif) |
 | Rapports générés automatiquement | `arbre/aml/report.py` (6 sections, LLM optionnel sous garde) ; **`neurones/rapport/`** (8 sections, sans LLM, garde-fou numérique, testé) | la version avec LLM de `neurones/rapport/` (étape 4) |
-| Interface de suivi des alertes | `arbre/` : pages HTML statiques (liste des cas, rapports) | une interface **interactive** avec décision de l'analyste (étape 3) |
+| Interface de suivi des alertes | `arbre/` : pages HTML statiques ; **`neurones/interface/`** : file triée par score, raisons, graphe, rapport, décision « Valider » ou « Classer sans suite » | — |
 | Mesures de frugalité | `arbre/results/bench_*.json` (débit, latences, RAM, tailles) ; `neurones/results/bench_mlp_x86_64.json`, `rapport_bench.json` | l'énergie (wattmètre sur l'OrangePi, RAPL illisible ici) |
 
 ## 2. Ce qui est fait
@@ -42,11 +42,13 @@ Ils lisent seulement des **alertes et leurs raisons**, au format des dossiers de
 | `scripts/bench.py` | taille, latence et débit du modèle seul : MLP contre forêt complète, et forêt avec cascade (configuration livrée par Yani). |
 | `scripts/evaluate.py` | évaluation **finale** sur le test, la traîne et le protocole littérature. Refuse de tourner deux fois. |
 | `scripts/plots.py` | images pour les slides, dans `results/figures/`. |
-| `tests/` | 23 tests : normalisation, absence de fuite, normalisation torch identique à numpy, explications, rapport. |
+| `tests/` | 27 tests : normalisation, absence de fuite, normalisation torch identique à numpy, explications, rapport, interface. |
 | `rapport/make_alerts.py` | rejoue une journée en flux avec la détection de `arbre/` (lecture seule, sans étiquette) et écrit les dossiers des cas les plus prioritaires dans `data/neurones/alertes/<date>/`. |
 | `rapport/render.py`, `rapport/templates/rapport_tracfin.md.j2` | rapport **sans LLM** en 8 sections : identification du compte, résumé, typologie, motifs du soupçon, faits chiffrés, chronologie, comptes liés, recommandation. Le template **n'écrit aucun nombre** : il recopie les textes déjà formatés du dossier. |
 | `rapport/guard.py` | garde-fou : un rapport qui contient un nombre absent du dossier est **refusé**. |
 | `rapport/report.py` | génère le rapport d'un cas, ou de tous avec la mesure du temps. |
+| `interface/app.py`, `interface/logic.py` | interface Streamlit : file des cas triée par score (filtres par typologie et statut), raisons de l'alerte, graphe des comptes (une flèche par opération), rapport TRACFIN téléchargeable, boutons « Valider » et « Classer sans suite ». Les décisions sont ajoutées à `data/neurones/decisions.jsonl` (rien n'est effacé). L'interface ne lit que les dossiers JSON : elle n'importe ni la détection ni le MLP. |
+| `interface/run.sh` | lance l'interface en une commande (et produit les alertes si elles manquent). |
 
 ## 3. Résultats mesurés
 
@@ -124,7 +126,7 @@ Anas passe aux **livrables attendus par CGI**, qui fonctionnent quel que soit le
 | Qui | Fait | Reste à faire |
 |---|---|---|
 | Youssef | son MLP | **toute la partie modèle** (`nn/`, `scripts/train.py`…) : l'améliorer, le comparer à celui d'Anas et à la forêt, avec le même protocole. `nn/explain.py` existe déjà : inutile de le refaire. |
-| Anas | premier MLP et ses mesures ; `rapport/` (rapport TRACFIN sans LLM, garde-fou, tests) | `interface/` (suivi des alertes, graphe, rapport, décision de l'analyste), puis le LLM qui reformule le rapport sous garde ; slides des livrables |
+| Anas | premier MLP et ses mesures ; `rapport/` (rapport TRACFIN sans LLM, garde-fou, tests) ; `interface/` (suivi des alertes, graphe, rapport, décision) | le LLM qui reformule le rapport sous garde (si le temps le permet) ; slides des livrables et scénario de démo |
 | Yani | `arbre/` : détection, rapports, démo, mesures | relire la PR ; `arbre/` reste en lecture seule pour nous |
 | Ensemble | | choix du modèle final ; Pull Request `neurones → main`, relue par Yani |
 
@@ -154,9 +156,12 @@ cd ../neurones
 ../.venv/bin/python -m rapport.make_alerts                # rejoue le 09/09 → data/neurones/alertes/2022-09-09/ (≈ 11 s)
 ../.venv/bin/python -m rapport.report --case C08-0001     # → data/neurones/rapports/2022-09-09/C08-0001.md
 ../.venv/bin/python -m rapport.report --all               # les 30 rapports + results/rapport_bench.json
+
+# Interface de démo (depuis la racine du dépôt) → http://localhost:8501
+bash neurones/interface/run.sh                            # PORT=8502 bash … pour changer de port
 ```
 
-Dépendances (dans le `.venv` de la racine) : numpy, polars, torch (CPU, entraînement uniquement), onnx, onnxruntime, matplotlib, jinja2 (rapport).
+Dépendances (dans le `.venv` de la racine) : numpy, polars, torch (CPU, entraînement uniquement), onnx, onnxruntime, matplotlib, jinja2 (rapport), streamlit 1.50.0 (démo uniquement : `pip install streamlit==1.50.0`).
 Les modèles (`artifacts/`) ne sont pas versionnés : ils se régénèrent avec `train.py`, puis `export.py`.
 
 **Règle d'or : le test ne s'évalue qu'une seule fois**, quand tout est figé. Le seuil, le poids des fraudes et l'arrêt précoce se choisissent **sur la validation uniquement**. `evaluate.py` refuse de réécrire `results/eval_mlp_test.json`. Relancer le test après avoir modifié le modèle, c'est tricher.
