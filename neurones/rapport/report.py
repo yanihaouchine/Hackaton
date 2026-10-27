@@ -3,7 +3,7 @@ Usage (depuis neurones/) :
   ../.venv/bin/python -m rapport.report --case C08-0001        → data/neurones/rapports/<date>/C08-0001.md
   ../.venv/bin/python -m rapport.report --all                  → tous les dossiers + results/rapport_bench.json
   ../.venv/bin/python -m rapport.report --all --llm [--llm-model gemma4:e2b] [--llm-url http://localhost:11434]
-                                         → résumé reformulé par le LLM local + results/rapport_bench_llm_<machine>.json
+      → résumé reformulé par le LLM + results/rapport_bench_llm_<modèle>_<machine>.json
 Les dossiers viennent de `python -m rapport.make_alerts` (data/neurones/alertes/<date>/).
 """
 
@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import platform
+import re
 import statistics
 import sys
 import time
@@ -37,6 +38,7 @@ def main() -> None:
     a.add_argument("--llm", action="store_true", help="résumé reformulé par le LLM local, sous garde")
     a.add_argument("--llm-url", default=None)
     a.add_argument("--llm-model", default=None)
+    a.add_argument("--llm-note", default="", help="où tourne le LLM (ex. « DeepEirb via tunnel SSH »)")
     args = a.parse_args()
 
     writer = None
@@ -49,6 +51,7 @@ def main() -> None:
             sys.exit(f"LLM indisponible : {e}. Sur une machine de l'école : `ollama serve` puis relancer.")
         print(f"LLM : {writer.model} ({writer.url})")
 
+    tag = re.sub(r"[^\w.-]", "_", writer.model) if writer is not None else ""
     src, out = ALERTS_DIR / args.date, REPORTS_DIR / args.date
     out.mkdir(parents=True, exist_ok=True)
     paths = sorted(src.glob("C*.json")) if args.all else [src / f"{args.case}.json"]
@@ -63,10 +66,10 @@ def main() -> None:
             accepted += ok
             if not ok:
                 reasons.append(md.split("LLM non retenu : ", 1)[-1].split(")", 1)[0])
-        suffix = "_llm" if writer is not None else ""
+        suffix = f"_llm_{tag}" if writer is not None else ""
         (out / f"{f['case_id']}{suffix}.md").write_text(md, encoding="utf-8")
     if not args.all:
-        print(f"rapport -> {out / (paths[0].stem + ('_llm' if writer else '') + '.md')} ({times[0]:.1f} ms)")
+        print(f"rapport -> {out / (paths[0].stem + (f'_llm_{tag}' if writer else '') + '.md')} ({times[0]:.1f} ms)")
         return
 
     from aml.provenance import run_info
@@ -80,8 +83,9 @@ def main() -> None:
     else:
         bench.update(writer=f"LLM {writer.model} via {writer.url} (résumé seulement) + template",
                      llm_accepted=accepted, llm_acceptance_rate=accepted / len(times),
-                     rejection_reasons=dict(sorted({r: reasons.count(r) for r in reasons}.items())))  # fmt: skip
-        name = f"rapport_bench_llm_{platform.node()}.json"
+                     rejection_reasons=dict(sorted({r: reasons.count(r) for r in reasons}.items())),
+                     note=args.llm_note)  # fmt: skip
+        name = f"rapport_bench_llm_{tag}_{platform.node()}.json"
     (ROOT / "results" / name).write_text(json.dumps(bench, indent=2, ensure_ascii=False))
     print(json.dumps({k: v for k, v in bench.items() if k != "run"}, indent=2, ensure_ascii=False))
     print(f"rapports -> {out}  ; mesures -> results/{name}")

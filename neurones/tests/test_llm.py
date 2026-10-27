@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from rapport.guard import unknown
-from rapport.llm import LlmUnavailable, OpenAICompatible, mask, rewrite, source_text
+from rapport.llm import LlmUnavailable, OpenAICompatible, facts_for_llm, rewrite
 from rapport.render import render, summary
 
 EXAMPLE = Path(__file__).resolve().parents[1] / "rapport" / "exemples" / "C08-0002.json"
@@ -32,19 +32,14 @@ class Fake:
         return self.answer(user)
 
 
-def marks(text: str) -> list[str]:
-    return re.findall(r"⟦F\d+⟧", text)
-
-
 def good(user: str) -> str:
-    m = marks(user)  # dans l'ordre : début, fin, comptes, opérations, montant total…
-    return f"Du {m[0]} au {m[1]}, plusieurs comptes ont réalisé des opérations signalées pour un total de {m[4]}."
+    return "Du ⟦DEBUT⟧ au ⟦FIN⟧, plusieurs comptes ont réalisé des opérations signalées pour un total de ⟦TOTAL⟧."
 
 
 def test_the_llm_never_sees_a_number(f: dict) -> None:
     w = Fake(good)
     rewrite(f, w)
-    assert w.seen and not re.search(r"\d", re.sub(r"⟦F\d+⟧", "", w.seen))
+    assert w.seen and not re.search(r"\d", re.sub(r"⟦[A-Z]+⟧", "", w.seen))
 
 
 def test_good_answer_is_accepted_and_values_reinjected(f: dict) -> None:
@@ -60,14 +55,24 @@ def test_answer_with_a_digit_is_rejected(f: dict) -> None:
     assert text == summary(f)
 
 
+def test_number_in_words_is_rejected(f: dict) -> None:
+    _, status = rewrite(f, Fake(lambda u: good(u) + " Trois comptes sont concernés."))
+    assert status["reason"] == "nombre écrit en lettres par le LLM"
+
+
+def test_number_word_from_the_facts_is_allowed(f: dict) -> None:
+    _, status = rewrite(f, Fake(lambda u: good(u) + " C'est la première relation entre ces deux comptes."))
+    assert status["source"] == "llm"  # « deux » figure dans les raisons du dossier
+
+
 def test_unknown_marker_is_rejected(f: dict) -> None:
-    _, status = rewrite(f, Fake(lambda u: good(u) + " Voir ⟦F999⟧."))
+    _, status = rewrite(f, Fake(lambda u: good(u) + " Voir ⟦ZZ⟧."))
     assert status["reason"] == "marqueur inconnu"
 
 
 def test_answer_without_the_total_is_rejected(f: dict) -> None:
     _, status = rewrite(f, Fake(lambda u: "Des opérations suspectes ont été relevées."))
-    assert status["reason"] == "montant total absent"
+    assert status["reason"] == "marqueur obligatoire absent"
 
 
 def test_unreachable_server_falls_back_to_template(f: dict) -> None:
@@ -86,12 +91,11 @@ def test_report_with_llm_passes_the_guard(f: dict) -> None:
     assert unknown(md, {**f, "redaction": {"model": "faux-llm"}}) == []
 
 
-def test_mask_round_trip(f: dict) -> None:
-    text = source_text(f)
-    masked, values = mask(text, (f["period"]["start"], f["totals"]["usd_fmt"]))
-    assert f["period"]["start"] in values.values()  # une date entière = un seul marqueur
-    restored = re.sub(r"⟦F\d+⟧", lambda m: values[m.group(0)], masked)
-    assert restored == text
+def test_markers_carry_meaning_and_values_round_trip(f: dict) -> None:
+    text, values = facts_for_llm(f)
+    assert values["⟦TOTAL⟧"] == f["totals"]["usd_fmt"] and values["⟦DEBUT⟧"] == f["period"]["start"]
+    assert not re.search(r"\d", re.sub(r"⟦[A-Z]+⟧", "", text))  # aucune valeur en clair
+    assert "7,3" not in text  # les raisons chiffrées ne sont pas confiées au LLM
 
 
 def test_client_against_a_local_openai_compatible_server(f: dict) -> None:

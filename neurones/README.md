@@ -24,7 +24,7 @@ Ils lisent seulement des **alertes et leurs raisons**, au format des dossiers de
 | Graphe des transactions visualisé | `arbre/aml/casegraph.py` : schéma SVG statique d'un cas (démo de Yani) ; **`neurones/interface/`** : graphe des comptes de chaque cas, compte principal en évidence | — |
 | Modèle de détection | `arbre/` : forêt strict + cascade, F1 test 0,653 ; `neurones/` : MLP, F1 test 0,606 (Youssef l'améliore) ; `anas/pipeline` : règles seules (archive) | le choix final du modèle (équipe) |
 | Alertes en temps réel | `arbre/aml/stream.py` (`Monitor.replay`) et `python -m aml demo` (tableau en direct dans le terminal) ; `rapport/make_alerts.py` rejoue une journée sans écrire dans `arbre/` | un affichage en direct dans l'interface (facultatif) |
-| Rapports générés automatiquement | `arbre/aml/report.py` (6 sections, LLM optionnel sous garde) ; **`neurones/rapport/`** (8 sections, garde-fou numérique, résumé reformulable par un LLM local sous garde, testé) | la mesure du temps avec un vrai LLM, sur une machine de l'école |
+| Rapports générés automatiquement | `arbre/aml/report.py` (6 sections, LLM optionnel sous garde) ; **`neurones/rapport/`** (8 sections, garde-fou numérique, résumé reformulable par un LLM local sous garde, testé) | — |
 | Interface de suivi des alertes | `arbre/` : pages HTML statiques ; **`neurones/interface/`** : file triée par score, raisons, graphe, rapport, décision « Valider » ou « Classer sans suite » | — |
 | Mesures de frugalité | `arbre/results/bench_*.json` (débit, latences, RAM, tailles) ; `neurones/results/bench_mlp_x86_64.json`, `rapport_bench.json` | l'énergie (wattmètre sur l'OrangePi, RAPL illisible ici) |
 
@@ -42,7 +42,7 @@ Ils lisent seulement des **alertes et leurs raisons**, au format des dossiers de
 | `scripts/bench.py` | taille, latence et débit du modèle seul : MLP contre forêt complète, et forêt avec cascade (configuration livrée par Yani). |
 | `scripts/evaluate.py` | évaluation **finale** sur le test, la traîne et le protocole littérature. Refuse de tourner deux fois. |
 | `scripts/plots.py` | images pour les slides, dans `results/figures/`. |
-| `tests/` | 37 tests : normalisation, absence de fuite, normalisation torch identique à numpy, explications, rapport, interface, garde du LLM (avec un faux serveur compatible Ollama). |
+| `tests/` | 39 tests : normalisation, absence de fuite, normalisation torch identique à numpy, explications, rapport, interface, garde du LLM (avec un faux serveur compatible Ollama). |
 | `rapport/make_alerts.py` | rejoue une journée en flux avec la détection de `arbre/` (lecture seule, sans étiquette) et écrit les dossiers des cas les plus prioritaires dans `data/neurones/alertes/<date>/`. |
 | `rapport/render.py`, `rapport/templates/rapport_tracfin.md.j2` | rapport **sans LLM** en 8 sections : identification du compte, résumé, typologie, motifs du soupçon, faits chiffrés, chronologie, comptes liés, recommandation. Le template **n'écrit aucun nombre** : il recopie les textes déjà formatés du dossier. |
 | `rapport/guard.py` | garde-fou : un rapport qui contient un nombre absent du dossier est **refusé**. |
@@ -114,7 +114,18 @@ Les raisons affichées portent donc bien la décision. Pour comparaison, la for�
 
 Journée du 09/09/2022 rejouée en flux avec la détection de `arbre/` : 654 467 transactions, 288 alertes, 158 cas, ce qui est identique à la démo publiée par Yani (`arbre/results/demo_2022-09-09.json`). Les 30 cas les plus prioritaires ont chacun leur rapport.
 Temps de génération d'un rapport **sans LLM** : **0,57 ms** (p50), 6,2 ms (p99), sur 30 rapports ; garde-fou accepté pour les 30 (`results/rapport_bench.json`).
-**Avec LLM : non mesuré** sur notre portable (pas de serveur LLM). À mesurer sur une machine de l'école (commande en section 5), résultat dans `results/rapport_bench_llm_<machine>.json`. Pour ordre de grandeur, Yani a mesuré environ 25 s par texte avec Qwen3.5-0.8B sur un Xeon (`arbre/results/llm_bench_ORC_x86_64.json`).
+**Avec LLM** (résumé seulement), mesuré le 27/10 sur les 30 rapports, Ollama de **DeepEirb** (RTX 6000 Ada partagée) appelé depuis le portable par un tunnel SSH (le temps inclut le réseau) :
+
+| Modèle (Ollama) | Taille | Temps par rapport (p50 / p99) | Résumés acceptés par la garde |
+|---|---|---|---|
+| **qwen3:1.7b** (choisi par défaut) | 1,4 Go | 1,23 s / 2,02 s | **27 / 30** |
+| ministral-3:3b | 3,0 Go | 0,69 s / 0,82 s | 18 / 30 (12 marqueurs inventés) |
+| gemma3:1b | 0,8 Go | 0,35 s / 0,63 s | 0 / 30 (marqueurs perdus, chiffres écrits) |
+| qwen2.5:1.5b | 1,0 Go | 0,27 s / 0,72 s | 0 / 30 (chiffres écrits : il remplace ⟦TOTAL⟧ par un nombre) |
+
+Sources : `results/rapport_bench_llm_<modèle>_<machine>.json`. Sans LLM : **0,57 ms**, soit **plus de 2 000 fois plus rapide**.
+Ce que la garde a attrapé pendant la mise au point : un modèle qui écrivait « 5 comptes » à la place du marqueur numéro 5, un autre qui inventait « deux comptes » au lieu de cinq, un autre qui collait un pourcentage d'une raison à la typologie. D'où les **marqueurs nommés** (⟦TOTAL⟧ plutôt que ⟦C⟧) et le fait de ne confier au LLM que les raisons sans chiffre.
+**Limite** : la garde vérifie que chaque nombre vient du dossier, pas que la phrase est juste. Les résumés acceptés relus reprennent les bonnes valeurs, mais reformulent peu. Conclusion pour le jury : **le template suffit**, le LLM est une option de confort, désactivée par défaut.
 
 ### Ressources de l'entraînement
 
@@ -128,7 +139,7 @@ Anas passe aux **livrables attendus par CGI**, qui fonctionnent quel que soit le
 | Qui | Fait | Reste à faire |
 |---|---|---|
 | Youssef | son MLP | **toute la partie modèle** (`nn/`, `scripts/train.py`…) : l'améliorer, le comparer à celui d'Anas et à la forêt, avec le même protocole. `nn/explain.py` existe déjà : inutile de le refaire. |
-| Anas | premier MLP et ses mesures ; `rapport/` (rapport TRACFIN, garde-fou, LLM sous garde, tests) ; `interface/` (suivi des alertes, graphe, rapport, décision) | mesurer le LLM sur une machine de l'école ; slides des livrables et scénario de démo |
+| Anas | premier MLP et ses mesures ; `rapport/` (rapport TRACFIN, garde-fou, LLM sous garde, tests) ; `interface/` (suivi des alertes, graphe, rapport, décision) | slides des livrables et scénario de démo |
 | Yani | `arbre/` : détection, rapports, démo, mesures | relire la PR ; `arbre/` reste en lecture seule pour nous |
 | Ensemble | | choix du modèle final ; Pull Request `neurones → main`, relue par Yani |
 
@@ -159,7 +170,8 @@ cd ../neurones
 ../.venv/bin/python -m rapport.report --case C08-0001     # → data/neurones/rapports/2022-09-09/C08-0001.md
 ../.venv/bin/python -m rapport.report --all               # les 30 rapports + results/rapport_bench.json
 # Avec LLM, sur une machine de l'école (Ollama) : dans un autre terminal, `/opt/ollama/bin/ollama serve`, puis
-../.venv/bin/python -m rapport.report --all --llm --llm-model gemma4:e2b   # → results/rapport_bench_llm_<machine>.json
+../.venv/bin/python -m rapport.report --all --llm --llm-model qwen3:1.7b   # → results/rapport_bench_llm_<modèle>_<machine>.json
+# Ou depuis le portable, LLM sur DeepEirb : ssh -N -J <login>@ssh.enseirb-matmeca.fr -L 11434:localhost:11434 <login>@deepeirb
 
 # Interface de démo (depuis la racine du dépôt) → http://localhost:8501
 bash neurones/interface/run.sh                            # PORT=8502 bash … pour changer de port

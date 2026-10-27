@@ -1,7 +1,8 @@
 """Reformulation du résumé par un petit LLM local, sous garde stricte (principe 2 de CLAUDE.md).
 
-1. Le LLM ne voit aucune valeur : chaque nombre du texte à reformuler est remplacé par un marqueur ⟦Fn⟧.
-2. Sa réponse est rejetée si elle contient un chiffre, un marqueur inconnu, ou si elle perd le montant total.
+1. Le LLM ne voit aucune valeur : chaque valeur est remplacée par un marqueur nommé (⟦DEBUT⟧, ⟦TOTAL⟧…).
+2. Sa réponse est rejetée si elle contient un chiffre, un nombre en lettres, un marqueur inconnu, ou si elle perd
+   un marqueur obligatoire (dates de début et de fin, montant total).
 3. Sinon, le code remet les vraies valeurs à la place des marqueurs ; le garde-fou du rapport revérifie tout.
 En cas d'échec (serveur absent, délai dépassé, réponse rejetée), le résumé du template est gardé.
 
@@ -20,15 +21,25 @@ import urllib.request
 from rapport.guard import NUMBER, unknown
 
 DEFAULT_URL = "http://localhost:11434"  # Ollama
-MARK = re.compile(r"⟦F(\d+)⟧")
+PREFERRED = ("qwen3:1.7b", "ministral-3:3b")  # meilleurs taux d'acceptation mesurés (results/rapport_bench_llm_*)
+MARK = re.compile(r"⟦([A-Z]+)⟧")  # noms en lettres : un modèle ne peut pas les prendre pour des valeurs
 SYSTEM = (
     "Tu es analyste conformité dans une banque française. Tu reformules le résumé d'un projet de déclaration de "
     "soupçon, en français sobre et factuel, en un seul paragraphe de trois à cinq phrases. Règles absolues : "
-    "n'écris aucun chiffre ; recopie chaque marqueur de la forme ⟦F suivi d'un numéro⟧ exactement tel quel, à "
-    "l'endroit où sa valeur doit apparaître ; n'ajoute aucun fait qui ne figure pas dans le texte. "
+    "n'écris aucun chiffre ni aucun nombre en lettres ; recopie chaque marqueur entre crochets, comme ⟦TOTAL⟧ "
+    "ou ⟦DEBUT⟧, exactement tel quel, à l'endroit où sa valeur doit apparaître ; "
+    "garde tous les marqueurs obligatoires ; "
+    "n'ajoute aucun fait qui ne figure pas dans le texte. "
     "Réponds uniquement par le paragraphe."
 )
 MAX_REASONS = 3
+# Nombres écrits en lettres (« un » et « une » exclus : ce sont aussi des articles)
+NUMBER_WORDS = re.compile(
+    r"\b(deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|vingt|trente|"
+    r"quarante|cinquante|soixante|cents?|milles?|millions?|milliards?|moitié|double|triple|quadruple|"
+    r"dizaines?|douzaines?|centaines?|milliers?)\b",
+    re.I,
+)
 
 
 class LlmUnavailable(RuntimeError):
@@ -54,47 +65,52 @@ class OpenAICompatible:
         models = [m["id"] for m in self._get("/v1/models").get("data", [])]
         if not models:
             raise LlmUnavailable("aucun modèle servi")
-        return models[0]
+        return next((m for m in PREFERRED if m in models), models[0])
 
     def complete(self, system: str, user: str) -> str:
         body = {"model": self.model, "temperature": 0, "stream": False,
                 "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}  # fmt: skip
         req = urllib.request.Request(self.url + "/v1/chat/completions", data=json.dumps(body).encode(),
                                      headers={"Content-Type": "application/json"})  # fmt: skip
-        try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as r:
-                text = json.load(r)["choices"][0]["message"]["content"]
-        except OSError as e:
-            raise LlmUnavailable(f"pas de réponse du LLM ({e.__class__.__name__})") from e
+        for attempt in (1, 2):  # serveur partagé : une seconde tentative si le premier appel échoue
+            try:
+                with urllib.request.urlopen(req, timeout=self.timeout) as r:
+                    text = json.load(r)["choices"][0]["message"]["content"]
+                break
+            except OSError as e:
+                if attempt == 2:
+                    raise LlmUnavailable(f"pas de réponse du LLM ({e.__class__.__name__})") from e
         return re.sub(r"<think>.*?</think>", "", text, flags=re.S).strip()  # modèles « à raisonnement »
 
 
-def mask(text: str, wholes: tuple[str, ...] = ()) -> tuple[str, dict[str, str]]:
-    """Remplace chaque valeur par un marqueur ⟦Fn⟧ : d'abord les valeurs entières du dossier (dates, montants),
-    puis chaque nombre restant. Renvoie le texte masqué et la table marqueur → valeur."""
-    values: dict[str, str] = {}
-
-    def key_for(v: str) -> str:
-        key = f"⟦F{len(values) + 1}⟧"
-        values[key] = v
-        return key
-
-    for w in sorted(set(wholes), key=len, reverse=True):
-        if w and w in text:
-            text = text.replace(w, key_for(w))
-    return NUMBER.sub(lambda m: key_for(m.group(0)), text), values
+REQUIRED = ("⟦DEBUT⟧", "⟦FIN⟧", "⟦TOTAL⟧")
 
 
-def source_text(f: dict) -> str:
-    """Texte confié au LLM : résumé du template et principales raisons (sans identifiant de compte)."""
-    from rapport.render import summary
+def facts_for_llm(f: dict) -> tuple[str, dict[str, str]]:
+    """Texte confié au LLM et table marqueur → valeur. Les marqueurs disent ce qu'ils désignent (⟦TOTAL⟧ et non
+    ⟦C⟧) pour que le modèle ne les place pas au mauvais endroit ; seules les raisons sans chiffre sont données."""
+    values = {
+        "⟦DEBUT⟧": f["period"]["start"],
+        "⟦FIN⟧": f["period"]["end"],
+        "⟦COMPTES⟧": str(f["totals"]["n_accounts"]),
+        "⟦OPERATIONS⟧": str(f["totals"]["n_ops"]),
+        "⟦TOTAL⟧": f["totals"]["usd_fmt"],
+        "⟦RANG⟧": str(f["priority_rank"]),
+        "⟦PRIORITE⟧": f["priority_pct"],
+    }
+    text = (
+        "Entre le ⟦DEBUT⟧ et le ⟦FIN⟧, ⟦COMPTES⟧ comptes ont réalisé ⟦OPERATIONS⟧ opérations signalées, pour un "
+        "total de ⟦TOTAL⟧ (contre-valeur en dollars). Le cas est classé au rang ⟦RANG⟧ de la journée (priorité "
+        f"⟦PRIORITE⟧) et se rapproche de la typologie « {f['typology']['label']} »."
+    )
+    reasons = [r["text"] for r in f["reasons"] if not NUMBER.search(r["text"]) and "`" not in r["text"]]
+    if reasons[:MAX_REASONS]:
+        text += " Principaux motifs : " + " ; ".join(reasons[:MAX_REASONS]) + "."
+    return text + "\n\nMarqueurs obligatoires : " + ", ".join(REQUIRED) + ".", values
 
-    reasons = [r["text"] for r in f["reasons"] if not r.get("context") and "`" not in r["text"]][:MAX_REASONS]
-    return summary(f) + (" Principaux motifs : " + " ; ".join(reasons) + "." if reasons else "")
 
-
-def check_answer(answer: str, values: dict[str, str], required: str) -> str | None:
-    """Raison du rejet, ou None si la réponse est acceptée."""
+def check_answer(answer: str, values: dict[str, str], required: list[str], source: str = "") -> str | None:
+    """Raison du rejet, ou None si la réponse est acceptée. `source` : texte confié au LLM (ses mots sont permis)."""
     if not answer or len(answer) > 2000:
         return "réponse vide ou trop longue"
     used = {m.group(0) for m in MARK.finditer(answer)}
@@ -102,8 +118,11 @@ def check_answer(answer: str, values: dict[str, str], required: str) -> str | No
         return "marqueur inconnu"
     if re.search(r"\d", MARK.sub("", answer)):
         return "chiffre écrit par le LLM"
-    if required not in used:
-        return "montant total absent"
+    allowed_words = {w.lower() for w in NUMBER_WORDS.findall(source)}  # ex. « entre ces deux comptes »
+    if {w.lower() for w in NUMBER_WORDS.findall(answer)} - allowed_words:
+        return "nombre écrit en lettres par le LLM"
+    if not set(required) <= used:
+        return "marqueur obligatoire absent"
     return None
 
 
@@ -112,9 +131,7 @@ def rewrite(f: dict, writer) -> tuple[str, dict]:
     from rapport.render import summary
 
     fallback = summary(f)
-    total = f["totals"]["usd_fmt"]
-    masked, values = mask(source_text(f), (f["period"]["start"], f["period"]["end"], total, f["priority_pct"]))
-    required = next(k for k, v in values.items() if v == total)  # le montant total doit rester dans le résumé
+    masked, values = facts_for_llm(f)
     status = {"source": "template", "model": getattr(writer, "model", "?"), "seconds": 0.0, "reason": ""}
     t = time.perf_counter()
     try:
@@ -123,7 +140,7 @@ def rewrite(f: dict, writer) -> tuple[str, dict]:
         status.update(reason=str(e), seconds=round(time.perf_counter() - t, 2))
         return fallback, status
     status["seconds"] = round(time.perf_counter() - t, 2)
-    reason = check_answer(answer, values, required)
+    reason = check_answer(answer, values, list(REQUIRED), masked)
     if reason is None:
         text = MARK.sub(lambda m: values[m.group(0)], answer)
         if unknown(text, f):  # double vérification après réinjection des valeurs
