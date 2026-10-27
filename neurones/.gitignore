@@ -1,0 +1,2 @@
+# Modèles entraînés : régénérables par scripts/train.py puis scripts/export.py
+artifacts/
