@@ -111,6 +111,32 @@ def train_final(variant: str, name: str = "strict", families: list[str] | None =
     return payload
 
 
+def export_lgbm(variant: str, name: str) -> dict:
+    """Régénère lgbm.txt (TreeSHAP) d'un modèle livré sans le modifier : réentraîne sa première seed avec les
+    paramètres de model.json et n'écrit le fichier que si la forêt obtenue a exactement l'empreinte livrée."""
+    from aml.forest import from_lightgbm
+    from aml.model import model_dir
+
+    d = model_dir(name)
+    info = json.loads((d / "model.json").read_text())
+    s, y, X, names, fmeta = _ctx(variant, hindsight=info["mode"] == "j1", stage2=info.get("stage2", False))
+    if fmeta["config_digest"] != info["engine_features_digest"]:
+        raise RuntimeError(f"features {fmeta['config_digest']} ≠ modèle {info['engine_features_digest']}")
+    tr, va = s.split_range("train"), s.split_range("val")
+    if info.get("train_days") is not None:
+        tr = tuple(int(np.searchsorted(s.t, day * 1440)) for day in info["train_days"])
+    rows = subsample_rows(y, *tr, neg_rate=info["neg_rate"], seed=info["seed"])
+    booster, _, _ = fit(X, y, names, rows, va, info["cols"], seed=info["seed"],
+                        params={k: v for k, v in info["params"].items() if k != "seed"})  # fmt: skip
+    forest = from_lightgbm(booster, info["cols"], names, booster.best_iteration,
+                           meta={"name": name, "features": fmeta["config_digest"]})  # fmt: skip
+    if forest.digest() != info["forest_digest"]:
+        raise RuntimeError(f"forêt réentraînée {forest.digest()} ≠ forêt livrée {info['forest_digest']} : "
+                           "lgbm.txt non écrit")  # fmt: skip
+    booster.save_model(str(d / "lgbm.txt"), num_iteration=info["best_iteration"])
+    return {"model": name, "forest_digest": info["forest_digest"], "lgbm_bytes": (d / "lgbm.txt").stat().st_size}
+
+
 def run_ablations(variant: str, which: list[str] | None = None, seeds=(42,), neg_rate: float = 0.25) -> dict:
     s, y, X, names, fmeta = _ctx(variant)
     tr, va = s.split_range("train"), s.split_range("val")

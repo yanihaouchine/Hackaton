@@ -39,13 +39,12 @@ kaggle.json
 # Exception : le modèle livré (petit) est versionné
 !arbre/artifacts/*.onnx
 
-# Modèles livrés : seuls les fichiers d'inférence de strict (temps réel), typology et j1 (revue J+1 de la démo)
-# sont versionnés ; lgbm.txt (8 Mo, régénérable par `python -m aml train`) et les variantes d'expérience restent locaux
+# Modèles livrés : les fichiers d'inférence de strict (temps réel), typology et j1 (revue J+1 de la démo) sont versionnés,
+# lgbm.txt compris (TreeSHAP, régénérable par `python -m aml export-lgbm`) ; les variantes d'expérience restent locales
 arbre/artifacts/models/*
 !arbre/artifacts/models/strict/
 !arbre/artifacts/models/typology/
 !arbre/artifacts/models/j1/
-arbre/artifacts/models/**/lgbm.txt
 
 # Configuration locale (propre à chaque poste)
 .vscode/
