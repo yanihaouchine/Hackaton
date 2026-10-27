@@ -1,0 +1,31 @@
+{
+  "run": {
+    "date": "2026-10-27T15:57:57+00:00",
+    "commit": "13d8e1b",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "anas-HP-Laptop-15-dw3xxx",
+      "arch": "x86_64",
+      "cpu": "11th Gen Intel(R) Core(TM) i3-1115G4 @ 3.00GHz",
+      "n_cpus": 4,
+      "python": "3.13.3"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0"
+    }
+  },
+  "n_reports": 30,
+  "render_ms_p50": 1229.85,
+  "render_ms_p99": 2023.21,
+  "render_ms_max": 2027.2,
+  "writer": "LLM qwen3:1.7b via http://localhost:11434 (résumé seulement) + template",
+  "llm_accepted": 27,
+  "llm_acceptance_rate": 0.9,
+  "rejection_reasons": {
+    "marqueur inconnu": 1,
+    "marqueur obligatoire absent": 2
+  },
+  "note": "DeepEirb (RTX 6000 Ada partagée, Ollama) via tunnel SSH depuis le portable"
+}

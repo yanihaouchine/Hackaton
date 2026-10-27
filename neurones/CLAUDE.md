@@ -4,6 +4,8 @@ Complète le `CLAUDE.md` de la racine (sujet, grille, données, principes, règl
 État actuel : MLP 64→32 (v2) entraîné, exporté en ONNX, évalué une fois sur le test ; présentation et commandes dans `README.md`.
 Code dans `mlp/` (`python -m mlp.<module>` depuis `neurones/`), tests dans `tests/`, chiffres dans `results/`,
 modèles régénérables dans `artifacts/` (hors git). La v1 (MLP 128→64) est conservée dans `results/v1/` ; son code est au commit `0c12204`.
+Livrables indépendants du modèle : `rapport/` (rapport TRACFIN, garde-fou, LLM sous garde) et `interface/` (démo Streamlit).
+Répartition : Youssef a la partie modèle (`mlp/`, `scripts/build_db.py`) ; Anas a `rapport/` et `interface/`.
 
 ## Chemins
 - `mlp/common.py` ajoute `arbre/` au `sys.path` et réutilise son code en lecture seule (flux, étiquettes, tirage, métriques, cas).
@@ -26,3 +28,8 @@ Format : `AAAA-MM-JJ : décision. Raison (critère de la grille).` Le découpage
 - 2026-10-27 : livrable en ONNX (onnxruntime), torch réservé à l'entraînement et aux explications ; écart torch / ONNX ≈ 1,3·10⁻⁷. Raison : dépendances d'inférence minimales et portables (frugalité).
 - 2026-10-27 : explications par gradient × entrée (méthode de la v1), entrées d'une même feature regroupées, au format des raisons de `arbre/`. Fidélité (validation, k = 3) : 86,5 % des alertes repassent sous le seuil, contre 12,3 % au hasard ; moins que la v1 (95,2 %) et la forêt (99,8 %). Source : `results/explain_mlp.json` (explicabilité).
 - 2026-10-27 : frugalité mesurée sur Apple M5 (1 thread, protocole de la v1, modèle seul) : MLP ONNX 74 Ko, p50 14,5 µs, 1,68 M tx/s ; forêt complète 1,6 Mo, p50 322 µs, 29 000 tx/s ; forêt avec cascade p50 3,7 µs, 1,60 M tx/s. Énergie non mesurée. Source : `results/bench_arm64.json` (frugalité).
+- 2026-10-27 : rapport et interface lisent seulement des dossiers d'alerte JSON au format de `arbre/` (`Reporter.facts`), produits par `rapport/make_alerts.py` qui réutilise la détection de `arbre/` en lecture seule (sa démo écrirait dans `arbre/`). Raison : livrables indépendants du modèle retenu (pertinence métier, démonstration).
+- 2026-10-27 : rapport par template Jinja2 qui n'écrit aucun nombre (il recopie les textes formatés du dossier) ; garde-fou : tout nombre absent du dossier fait refuser le rapport. Raison : chaque chiffre est traçable (explicabilité, principe 2).
+- 2026-10-27 : LLM via une API compatible OpenAI (Ollama des machines de l'école, llama-server), bibliothèque standard seulement ; il ne reformule que le résumé, ne voit que des marqueurs nommés (⟦DEBUT⟧, ⟦TOTAL⟧…) et les raisons sans chiffre, et sa réponse est rejetée au moindre chiffre, nombre en lettres absent des faits, marqueur inconnu ou obligatoire manquant ; repli template. Raison : aucune dépendance native à installer, principe 2 de CLAUDE.md (frugalité, explicabilité).
+- 2026-10-27 : interface Streamlit (1.50.0) pour la démo uniquement, hors du chemin de détection ; décisions de l'analyste journalisées sans effacement dans `data/neurones/decisions.jsonl`. Raison : démonstration, pertinence métier.
+- 2026-10-27 : modèle LLM par défaut qwen3:1.7b (27/30 résumés acceptés, 1,2 s par rapport sur DeepEirb), devant ministral-3:3b (18/30) ; gemma3:1b et qwen2.5:1.5b rejetés (0/30). LLM désactivé par défaut dans la démo : le template suffit et est plus de 2 000 fois plus rapide. Raison : le plus petit modèle qui suffit, mesuré (frugalité, explicabilité).

@@ -1,0 +1,85 @@
+# Projet de déclaration de soupçon : cas {{ f.case_id }}
+
+> Brouillon **généré automatiquement** à partir des faits calculés par la détection. Il doit être vérifié, complété
+> et validé par un analyste habilité avant toute transmission à TRACFIN. Données synthétiques (jeu IBM AML).
+
+## Identification du compte
+
+| | |
+|---|---|
+| Compte principal | `{{ main.id }}` |
+| Banque | {{ main.bank }} ({{ main.country }}) |
+| Titulaire (entité) | {{ main.entity }}, qui détient {{ main.entity_accounts }} compte(s) connu(s) |
+| Rôle dans le cas | {{ main.role }}, présent dans {{ main.n_ops }} opération(s) signalée(s) |
+
+## Résumé
+
+{{ summary }}
+
+Détection : {{ f.model.mode_label }}.
+
+## Typologie
+
+**{{ f.typology.label }}** (confiance du classifieur de typologie : {{ f.typology.proba_pct }}).
+
+- Définition : {{ typ_def }}
+- Pourquoi c'est suspect : {{ typ_why }}
+
+## Motifs du soupçon
+
+Raisons qui ont le plus fait monter le score de l'alerte la plus forte du cas (méthode : {{ f.model.method }}) :
+{% for line in reason_lines %}
+- {{ line }}
+{% else %}
+- Aucune raison individuelle n'est disponible pour ce modèle : se reporter aux indicateurs ci-dessous.
+{% endfor %}
+{% if f.indicators or f.evidence_lines %}
+
+Indicateurs et éléments structurels du réseau de comptes :
+{% for i in f.indicators %}
+- {{ i.text }}
+{% endfor %}
+{% for e in f.evidence_lines %}
+- {{ e }}
+{% endfor %}
+{% endif %}
+
+## Faits chiffrés
+
+| Fait | Valeur |
+|---|---|
+| Rang de priorité du jour | {{ f.priority_rank }} |
+| Priorité du cas | {{ f.priority_pct }} |
+| Score de l'alerte la plus forte | {{ f.max_score_pct }} (seuil d'alerte : {{ f.threshold_pct }}) |
+| Opérations signalées | {{ f.totals.n_ops }} |
+| Comptes impliqués | {{ f.totals.n_accounts }} |
+| Montant total | {{ f.totals.usd_fmt }} |
+| Première opération | {{ f.period.start }} |
+| Dernière opération | {{ f.period.end }} |
+
+## Chronologie des transactions
+
+| N° | Date | Émetteur | Bénéficiaire | Montant | Contre-valeur | Moyen | Score |
+|---|---|---|---|---|---|---|---|
+{% for o in ops %}
+| {{ o.index }} | {{ o.date }} | `{{ o.src }}` | `{{ o.dst }}` | {{ o.amount_fmt }} {{ o.currency }} | {{ o.usd_fmt }} USD | {{ o.format }} | {{ o.score_pct }} |
+{% endfor %}
+
+## Comptes liés
+
+| Compte | Rôle | Banque | Pays | Entité | Opérations |
+|---|---|---|---|---|---|
+{% for a in f.accounts %}
+| `{{ a.id }}` | {{ a.role }} | {{ a.bank }} | {{ a.country }} | {{ a.entity }} | {{ a.n_ops }} |
+{% endfor %}
+
+## Recommandation à l'analyste
+
+- {{ urgency }}
+{% for c in checks %}
+- À vérifier : {{ c }}
+{% endfor %}
+- Décider après examen : **classer sans suite**, ou **préparer la déclaration** à TRACFIN.
+
+> Traçabilité : détection {{ f.model.name }} ({{ f.model.mode_label }}) ; explications {{ f.model.method }} ;
+> {{ redaction }} ; tous les nombres viennent du dossier {{ f.case_id }}.
