@@ -9,11 +9,11 @@ from __future__ import annotations
 
 import re
 
-NUMBER = re.compile(r"(?<![\w.,])\d+(?:[  ]\d{3})*(?:[.,]\d+)?(?!\w)")
+NUMBER = re.compile(r"(?<![\w.,])\d+(?:[ \u00a0\u202f]\d{3})*(?:[.,]\d+)?(?!\w)")  # espaces, insécables, fines
 
 
 def _norm(token: str) -> str:
-    return re.sub(r"[\s  ]", "", token).replace(".", ",")
+    return re.sub(r"[\s\u00a0\u202f]", "", token).replace(".", ",")
 
 
 def numbers(text: str) -> list[str]:

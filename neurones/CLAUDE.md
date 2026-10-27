@@ -3,6 +3,8 @@
 Complète le `CLAUDE.md` de la racine (sujet, grille, données, principes, règles de travail), qui s'applique aussi ici.
 État actuel : MLP entraîné, exporté en ONNX et évalué une fois sur le test ; présentation et commandes dans `README.md`.
 Code dans `nn/`, scripts dans `scripts/`, chiffres dans `results/`, modèles régénérables dans `artifacts/` (hors git).
+Livrables indépendants du modèle : `rapport/` (rapport TRACFIN, garde-fou, LLM sous garde) et `interface/` (démo Streamlit).
+Répartition : Youssef a la partie modèle (`nn/`, `scripts/`) ; Anas a `rapport/` et `interface/`.
 
 ## Chemins
 - `nn/data.py` ajoute `arbre/` au `sys.path` et réutilise son code en lecture seule (flux, étiquettes, features, découpage, tirage, métriques).
@@ -17,3 +19,7 @@ Format : `AAAA-MM-JJ : décision. Raison (critère de la grille).` Le découpage
 - 2026-10-27 : livrable en ONNX (onnxruntime), torch réservé à l'entraînement ; écart torch / ONNX ≤ 1,4·10⁻⁷. Raison : dépendances d'inférence minimales et portables (frugalité, `CLAUDE.md`).
 - 2026-10-27 : explications par gradient × entrée (one-hot regroupés), au format des raisons de `arbre/` ; fidélité mesurée par le protocole de `arbre/`. Raison : TreeSHAP ne s'applique pas à un réseau (explicabilité).
 - 2026-10-27 : test évalué une fois (`results/eval_mlp_test.json`) : F1 0,606 contre 0,653 pour la forêt strict. La forêt reste le modèle de détection ; le MLP est présenté comme comparaison mesurée (plus petit : 156 Ko contre 1,6 Mo ; moins précis ; moins rapide que la forêt avec cascade). Raison : honnêteté des résultats (qualité technique, frugalité).
+- 2026-10-27 : rapport et interface lisent seulement des dossiers d'alerte JSON au format de `arbre/` (`Reporter.facts`), produits par `rapport/make_alerts.py` qui réutilise la détection de `arbre/` en lecture seule (sa démo écrirait dans `arbre/`). Raison : livrables indépendants du modèle retenu (pertinence métier, démonstration).
+- 2026-10-27 : rapport par template Jinja2 qui n'écrit aucun nombre (il recopie les textes formatés du dossier) ; garde-fou : tout nombre absent du dossier fait refuser le rapport. Raison : chaque chiffre est traçable (explicabilité, principe 2).
+- 2026-10-27 : LLM via une API compatible OpenAI (Ollama des machines de l'école, llama-server), bibliothèque standard seulement ; il ne reformule que le résumé, ne voit que des marqueurs ⟦Fn⟧, et sa réponse est rejetée au moindre chiffre ; repli template. Raison : aucune dépendance native à installer, principe 2 de CLAUDE.md (frugalité, explicabilité).
+- 2026-10-27 : interface Streamlit (1.50.0) pour la démo uniquement, hors du chemin de détection ; décisions de l'analyste journalisées sans effacement dans `data/neurones/decisions.jsonl`. Raison : démonstration, pertinence métier.

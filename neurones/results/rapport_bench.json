@@ -1,7 +1,7 @@
 {
   "run": {
-    "date": "2026-10-27T14:38:19+00:00",
-    "commit": "0c12204",
+    "date": "2026-10-27T15:18:50+00:00",
+    "commit": "ae936c5",
     "dirty": true,
     "seed": 42,
     "machine": {
@@ -16,10 +16,10 @@
       "polars": "2.1.0"
     }
   },
-  "writer": "template jinja2 (sans LLM)",
   "n_reports": 30,
-  "render_ms_p50": 0.51,
-  "render_ms_p99": 5.92,
-  "render_ms_max": 8.0,
+  "render_ms_p50": 0.57,
+  "render_ms_p99": 6.21,
+  "render_ms_max": 8.47,
+  "writer": "template jinja2 (sans LLM)",
   "guard": "tous acceptés"
 }

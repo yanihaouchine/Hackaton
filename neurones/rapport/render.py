@@ -1,4 +1,5 @@
-"""Dossier d'alerte (dict) → rapport Markdown, par template Jinja2, sans LLM."""
+"""Dossier d'alerte (dict) → rapport Markdown, par template Jinja2. Un LLM local peut reformuler le résumé
+(`rapport/llm.py`), sous garde ; sans LLM, ou s'il est rejeté, le résumé du template est utilisé."""
 
 from __future__ import annotations
 
@@ -26,13 +27,38 @@ def reason_line(r: dict) -> str:
     return line + (", *élément de contexte*" if r.get("context") else "")
 
 
-def render(f: dict) -> str:
+def summary(f: dict) -> str:
+    """Résumé rédigé par template : la référence, et le texte que le LLM peut reformuler."""
+    return (
+        f"Entre le {f['period']['start']} et le {f['period']['end']}, {f['totals']['n_accounts']} comptes ont réalisé "
+        f"{f['totals']['n_ops']} opérations signalées, pour un total de **{f['totals']['usd_fmt']}** "
+        f"(contre-valeur en dollars). Le cas est classé au rang **{f['priority_rank']}** de la journée "
+        f"(priorité {f['priority_pct']}) et se rapproche de la typologie « {f['typology']['label']} »."
+    )
+
+
+def render(f: dict, writer=None) -> str:
+    """`writer` : client LLM (rapport/llm.py) ou None pour le template seul."""
     check(f)
+    text, redaction = summary(f), "rapport rédigé par template, sans LLM"
+    meta = {}
+    if writer is not None:
+        from rapport.llm import rewrite
+
+        text, status = rewrite(f, writer)
+        meta = {"redaction": status}  # le nom du modèle peut contenir des chiffres : il fait partie des faits
+        redaction = (
+            f"résumé reformulé par un LLM local ({status['model']}) sous garde, le reste par template"
+            if status["source"] == "llm"
+            else f"rapport rédigé par template (LLM non retenu : {status['reason']})"
+        )
     typ_def, typ_why, checks = describe(f["typology"].get("code", "OTHER"))
     urgent = f["priority_rank"] <= PRIORITY_RANKS
     md = _env.get_template("rapport_tracfin.md.j2").render(
         f={"indicators": [], "evidence_lines": [], **f},
         main=main_account(f),
+        summary=text,
+        redaction=redaction,
         reason_lines=[reason_line(r) for r in f["reasons"]],
         ops=sorted(f["operations"], key=lambda o: o["index"]),
         typ_def=typ_def,
@@ -42,7 +68,7 @@ def render(f: dict) -> str:
         if urgent
         else "Examen dans la file normale.",
     )
-    bad = unknown(md, f)
+    bad = unknown(md, {**f, **meta})
     if bad:
         raise GuardError(f"nombres absents du dossier : {sorted(set(bad))}")
     return md

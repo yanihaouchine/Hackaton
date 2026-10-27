@@ -21,6 +21,18 @@ st.set_page_config(page_title="Suivi des alertes LCB-FT", layout="wide")
 st.title("Suivi des alertes LCB-FT")
 st.caption("Données synthétiques IBM AML. Chaque alerte est un brouillon : l'analyste décide.")
 
+
+@st.cache_resource
+def llm_client():
+    """Client du LLM local (Ollama ou llama-server, AML_LLM_URL / AML_LLM_MODEL), ou None s'il est absent."""
+    from rapport.llm import LlmUnavailable, OpenAICompatible
+
+    try:
+        return OpenAICompatible()
+    except LlmUnavailable:
+        return None
+
+
 days = logic.days()
 if not days:
     st.error("Aucune alerte. Lancer d'abord : `cd neurones && ../.venv/bin/python -m rapport.make_alerts`")
@@ -82,7 +94,17 @@ with t_graph:
     st.caption("Une flèche par opération signalée (date, montant). En orange : le compte principal.")
     st.graphviz_chart(logic.case_dot(f, main["id"]), width="stretch")
 with t_report:
-    md = render(f)
+    writer = None
+    if st.toggle("Reformuler le résumé avec le LLM local (sous garde)", key="llm"):
+        writer = llm_client()
+        if writer is None:
+            st.info("LLM indisponible : rapport par template. Sur une machine de l'école, lancer `ollama serve`.")
+    md = render(f, writer)
+    if writer is not None and "résumé reformulé par un LLM" in md:
+        st.success(f"Résumé reformulé par {writer.model}, garde-fou accepté : aucune valeur écrite par le LLM.")
+    elif writer is not None:
+        why = md.split("LLM non retenu : ", 1)[-1].split(")", 1)[0]
+        st.warning(f"LLM non retenu ({why}) : résumé du template.")
     st.download_button("Télécharger le rapport (Markdown)", md, file_name=f"{case_id}.md")
     st.markdown(md)
 

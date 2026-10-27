@@ -14,10 +14,8 @@
 
 ## Résumé
 
-Entre le {{ f.period.start }} et le {{ f.period.end }}, {{ f.totals.n_accounts }} comptes ont réalisé
-{{ f.totals.n_ops }} opérations signalées, pour un total de **{{ f.totals.usd_fmt }}** (contre-valeur en dollars).
-Le cas est classé au rang **{{ f.priority_rank }}** de la journée (priorité {{ f.priority_pct }}) et se rapproche
-de la typologie « {{ f.typology.label }} ».
+{{ summary }}
+
 Détection : {{ f.model.mode_label }}.
 
 ## Typologie
@@ -84,4 +82,4 @@ Indicateurs et éléments structurels du réseau de comptes :
 - Décider après examen : **classer sans suite**, ou **préparer la déclaration** à TRACFIN.
 
 > Traçabilité : détection {{ f.model.name }} ({{ f.model.mode_label }}) ; explications {{ f.model.method }} ;
-> rapport rédigé par template, sans LLM ; tous les nombres viennent du dossier {{ f.case_id }}.
+> {{ redaction }} ; tous les nombres viennent du dossier {{ f.case_id }}.
