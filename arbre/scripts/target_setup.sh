@@ -2,7 +2,7 @@
 # Mise en place et mesures sur une machine cible (OrangePi Zero 4, Jetson…), sans entraînement.
 # Prérequis : python3 (≥ 3.10), gcc ; arbre/ et data/processed/<variante>/ copiés depuis le poste de
 # développement, en gardant la structure du dépôt (data/ à la racine, à côté de arbre/), par exemple depuis la racine :
-#   rsync -aR --exclude out --exclude build --exclude 'artifacts/models/*/lgbm.txt' \
+#   rsync -aR --exclude out --exclude build \
 #         arbre data/processed/HI-Small data/state cible:Hackathon/
 # Usage sur la cible : arbre/scripts/target_setup.sh [venv|build|bench|demo]
 set -euo pipefail

@@ -1,0 +1,74 @@
+{
+  "run": {
+    "date": "2026-10-27T12:52:46+00:00",
+    "commit": "009a61a",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "yani-IdeaPad-1-14IJL7",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Celeron(R) N4500 @ 1.10GHz",
+      "n_cpus": 2,
+      "python": "3.12.3"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "variant": "HI-Small",
+  "model": "strict",
+  "n_tx": 5078345,
+  "threads": 1,
+  "cascade": true,
+  "stream": {
+    "wall_s": 15.410200094000174,
+    "cpu_s": 15.399215458,
+    "tx_per_s": 329544.3906648045,
+    "alerts": 3747,
+    "chunk": 65536
+  },
+  "latency_engine_ns": {
+    "p50": 2421.0,
+    "p99": 7914.010000000009,
+    "p999": 129856.16700000307,
+    "max": 274614.0,
+    "n": 200000
+  },
+  "latency_python_call_us": {
+    "batch1_p50": 65.882,
+    "batch1_p99": 209.1895399999999,
+    "batch1024_per_tx_p50": 3.40222509765625
+  },
+  "memory_mib": {
+    "engine_state": 166.0016860961914,
+    "VmHWM": 390,
+    "VmRSS": 390,
+    "RssAnon": 216,
+    "RssFile": 174,
+    "ru_maxrss": 2227.8828125
+  },
+  "sizes_bytes": {
+    "forest": 1622291,
+    "engine_so": 43312,
+    "lgbm_txt": null
+  },
+  "energy": {
+    "methode": "non mesuré"
+  },
+  "engine_stats": {
+    "tx": 5078345,
+    "edges": 529450,
+    "ring_overflow": 0,
+    "recycled_links": 0,
+    "scan_cap_hits": 0,
+    "dfs_expansions": 646971,
+    "cycle_budget_hits": 0,
+    "pair_used": 647939,
+    "pair_evicted": 0,
+    "cascade_skips": 5041716
+  },
+  "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+  "tag": ""
+}
