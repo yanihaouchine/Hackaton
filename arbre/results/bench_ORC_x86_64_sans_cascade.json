@@ -1,0 +1,74 @@
+{
+  "run": {
+    "date": "2026-10-27T08:07:13+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "variant": "HI-Small",
+  "model": "strict",
+  "n_tx": 5078345,
+  "threads": 1,
+  "cascade": false,
+  "stream": {
+    "wall_s": 797.7872069610166,
+    "cpu_s": 797.3277764320001,
+    "tx_per_s": 6365.538273476162,
+    "alerts": 4377,
+    "chunk": 65536
+  },
+  "latency_engine_ns": {
+    "p50": 161682.0,
+    "p99": 271034.0900000001,
+    "p999": 321236.09100000164,
+    "max": 1621453.0,
+    "n": 200000
+  },
+  "latency_python_call_us": {
+    "batch1_p50": 281.3045,
+    "batch1_p99": 574.2791699999993,
+    "batch1024_per_tx_p50": 155.41512890625
+  },
+  "memory_mib": {
+    "engine_state": 165.98657989501953,
+    "VmHWM": 399,
+    "VmRSS": 399,
+    "RssAnon": 216,
+    "RssFile": 182,
+    "ru_maxrss": 570.59375
+  },
+  "sizes_bytes": {
+    "forest": 1622291,
+    "engine_so": 43304,
+    "lgbm_txt": 8083054
+  },
+  "energy": {
+    "methode": "non mesuré"
+  },
+  "engine_stats": {
+    "tx": 5078345,
+    "edges": 529450,
+    "ring_overflow": 0,
+    "recycled_links": 0,
+    "scan_cap_hits": 0,
+    "dfs_expansions": 646971,
+    "cycle_budget_hits": 0,
+    "pair_used": 647939,
+    "pair_evicted": 0,
+    "cascade_skips": 0
+  },
+  "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.43",
+  "tag": "sans_cascade"
+}

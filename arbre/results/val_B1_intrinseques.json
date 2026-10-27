@@ -1,0 +1,46 @@
+{
+  "run": {
+    "date": "2026-10-26T17:04:50+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "name": "B1_intrinseques",
+  "families": [
+    "tx"
+  ],
+  "n_features": 9,
+  "neg_rate": 0.25,
+  "features": "89103fff278f",
+  "runs": [
+    {
+      "seed": 42,
+      "best_iteration": 18,
+      "train_rows": 814479,
+      "train_seconds": 20.5,
+      "val_pr_auc": 0.0749239835608151,
+      "val_best_f1": {
+        "threshold": 0.11719813768493773,
+        "f1": 0.16241299303944315,
+        "precision": 0.13548387096774195,
+        "recall": 0.20270270270270271
+      }
+    }
+  ],
+  "val_f1_mean": 0.16241299303944315,
+  "val_f1_std": 0.0,
+  "val_pr_auc_mean": 0.0749239835608151,
+  "val_pr_auc_std": 0.0
+}

@@ -1,0 +1,80 @@
+{
+  "run": {
+    "date": "2026-10-27T08:13:58+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "model": "strict",
+  "rows": [
+    {
+      "trees": 50,
+      "nodes": 6250,
+      "val_pr_auc": 0.6095946366251971,
+      "val_best_f1": 0.6167773083886542,
+      "eval_us_per_tx": 1.3153786398470402,
+      "bytes_compact": 125000
+    },
+    {
+      "trees": 100,
+      "nodes": 12500,
+      "val_pr_auc": 0.6326578119509244,
+      "val_best_f1": 0.6503287507471607,
+      "eval_us_per_tx": 4.620812659850344,
+      "bytes_compact": 250000
+    },
+    {
+      "trees": 200,
+      "nodes": 25000,
+      "val_pr_auc": 0.6377636496854727,
+      "val_best_f1": 0.6634382566585957,
+      "eval_us_per_tx": 14.974882180104032,
+      "bytes_compact": 500000
+    },
+    {
+      "trees": 300,
+      "nodes": 37500,
+      "val_pr_auc": 0.6404039121169463,
+      "val_best_f1": 0.6666666666666667,
+      "eval_us_per_tx": 30.134015759686008,
+      "bytes_compact": 750000
+    },
+    {
+      "trees": 500,
+      "nodes": 62500,
+      "val_pr_auc": 0.645425185802976,
+      "val_best_f1": 0.671386430678466,
+      "eval_us_per_tx": 58.97552219917998,
+      "bytes_compact": 1250000
+    },
+    {
+      "trees": 800,
+      "nodes": 100000,
+      "val_pr_auc": 0.6495455155639845,
+      "val_best_f1": 0.6754491017964073,
+      "eval_us_per_tx": 101.9674245803617,
+      "bytes_compact": 2000000
+    },
+    {
+      "trees": 1145,
+      "nodes": 143125,
+      "val_pr_auc": 0.6528823610629764,
+      "val_best_f1": 0.6795413397706699,
+      "eval_us_per_tx": 157.97058286028914,
+      "bytes_compact": 2862500
+    }
+  ],
+  "note": "coûts mesurés sur la machine courante, un thread"
+}

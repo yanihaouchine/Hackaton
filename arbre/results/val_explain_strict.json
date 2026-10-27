@@ -1,0 +1,39 @@
+{
+  "run": {
+    "date": "2026-10-27T06:07:50+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "model": "strict",
+  "split": "val",
+  "method": "TreeSHAP",
+  "n_alerts": 621,
+  "faithfulness": {
+    "k": 3,
+    "n_alerts": 621,
+    "share_below_threshold_after": 0.998389694041868,
+    "median_score_drop": 0.9848267022326258
+  },
+  "indicator_coverage": 0.533011272141707,
+  "indicator_coverage_true_alerts": 0.5737122557726465,
+  "indicator_coverage_false_alerts": 0.13793103448275862,
+  "top_reason_family": {
+    "Opération": 568,
+    "Conservation des flux": 51,
+    "Comportement de l'émetteur": 1,
+    "Relation": 1
+  }
+}

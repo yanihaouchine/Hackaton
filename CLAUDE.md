@@ -1,8 +1,12 @@
 # CLAUDE.md : hackathon AML basse consommation
 
 Référence de toutes les sessions Claude Code sur ce dépôt. À tenir à jour, surtout « Décisions prises ».
-État actuel : **aucun code de solution**. Le dépôt ne contient que les données (`data/`, non versionné), `scripts/get_data.sh` et ce fichier.
-L'architecture n'est pas encore fixée : ne pas en inventer une ; la proposer et la faire valider avant d'écrire du code.
+Le dépôt accueille plusieurs solutions, chacune dans son dossier avec son propre `CLAUDE.md` (architecture, décisions, chiffres) :
+- `arbre/` : moteur de features en C et forêt d'arbres (LightGBM) ; voir `arbre/CLAUDE.md`.
+- la solution par réseaux de neurones de l'équipe, dans son propre dossier.
+
+Ce fichier ne contient que ce qui est commun : sujet, grille, contraintes, données, principes et règles de travail.
+Ne pas modifier le dossier d'une autre solution sans le dire. Toute évolution d'architecture se propose avant d'être codée.
 
 ## Projet
 Lutte anti-blanchiment (LCB-FT) : à partir du flux de transactions IBM AML, lever des alertes **justifiées** et produire pour chacune
@@ -26,7 +30,7 @@ Grille de notation : chaque choix doit se rattacher à au moins une ligne.
 - Code **indépendant de l'architecture** (Intel, AMD, ARM64) : pas de `-march=native`, pas d'intrinsèques, pas de dépendance obligatoire à CUDA ou au NPU.
   Toute accélération reste optionnelle, détectée à l'exécution, avec un repli CPU.
 
-## Données (`data/`, jamais committé)
+## Données (`data/` à la racine, partagé entre les solutions, jamais committé)
 - `scripts/get_data.sh [VARIANTE...]` télécharge dans `data/raw/` depuis Kaggle (`ealtman2019/ibm-transactions-for-anti-money-laundering-aml`, public, sans clé).
   La variante par défaut est HI-Small. `scripts/get_data_large.sh` récupère les autres (LI-Small, HI/LI-Medium, HI/LI-Large : environ 38 GiB),
   après avoir vérifié l'espace disque ; les téléchargements interrompus reprennent. Ne jamais charger une variante Large entièrement en RAM.
@@ -45,7 +49,8 @@ Grille de notation : chaque choix doit se rattacher à au moins une ligne.
   - `Patterns.txt` ne couvre que 3 209 des 5 177 transactions illicites (62 %) : le reste n'a pas de typologie. Mesurer le rappel aussi hors motifs.
   - Les codes banque de `accounts.csv` (`Bank ID`) n'ont pas de zéros en tête, contrairement à ceux de `Trans.csv` : normaliser avant toute jointure.
   - `Is Laundering` et `Patterns.txt` sont des **étiquettes** : elles servent à l'entraînement et à l'évaluation, jamais comme feature.
-- Tout fichier dérivé (sous `data/`, hors `raw/`) doit être régénérable par un script du dépôt.
+- Tout fichier dérivé (sous `data/`, hors `raw/`) doit être régénérable par un script du dépôt. Sous-dossiers déjà utilisés par `arbre/` :
+  `data/processed/`, `data/features/`, `data/state/` ; une autre solution prend ses propres sous-dossiers.
 - Toute source externe (listes GAFI, taux de change…) doit être documentée (URL, licence, date, usage) dans `data/SOURCES.md` **avant** utilisation.
 
 ## Principes non négociables
@@ -59,7 +64,7 @@ Grille de notation : chaque choix doit se rattacher à au moins une ligne.
 5. **Chaque alerte se justifie** : raisons lisibles par un humain (règles, indicateurs, typologie), pas seulement un score.
 
 ## Rigueur d'évaluation
-- Découpage **temporel** (train, validation, test), jamais aléatoire ; traîne du 11 au 18/09 évaluée à part. Les bornes sont à décider et à consigner ci-dessous.
+- Découpage **temporel** (train, validation, test), jamais aléatoire ; traîne du 11 au 18/09 évaluée à part. Bornes : voir « Décisions prises ».
 - Seuil, hyperparamètres et calibration sont choisis **sur la validation uniquement** ; le test n'est regardé qu'une fois la configuration figée.
 - Métriques sur la classe illicite : précision, rappel, F1, PR-AUC, précision@k (k = capacité quotidienne d'un analyste),
   et taux de tentatives détectées **par typologie**.
@@ -74,10 +79,10 @@ Grille de notation : chaque choix doit se rattacher à au moins une ligne.
 
 ## Conventions
 - Python compatible 3.10 et plus. Dépendances d'inférence minimales et disponibles en wheels aarch64.
-- Chemins relatifs à la racine du dépôt ou passés en argument ; aucun chemin absolu.
+- Chemins relatifs à la racine du dépôt (ou du dossier de la solution) ou passés en argument ; aucun chemin absolu.
 - Seed fixée (42) et exécutions déterministes (threads fixés).
 - Identifiants de code en anglais ; libellés d'alerte, rapports et messages en français.
-- `ruff check . && ruff format .` avant de proposer un commit.
+- `ruff check . && ruff format .` (depuis le dossier de la solution) avant de proposer un commit.
 
 ## Règles de travail pour Claude
 - **Ne pas coder sans validation** de l'approche par l'utilisateur ; proposer d'abord, brièvement, en rattachant la proposition à la grille.
@@ -85,9 +90,20 @@ Grille de notation : chaque choix doit se rattacher à au moins une ligne.
 - Travailler d'abord sur un **échantillon** (un jour, ou environ 100 k transactions), puis sur le dataset complet ; surveiller la RAM (`/usr/bin/time -v`).
 - Vérifier la portabilité ARM dès qu'une dépendance ou du code natif est ajouté (outils qemu/aarch64 à réinstaller au besoin : voir « Environnement local »).
 - Ne jamais committer `data/`, `models/`, `tools/`, `.venv/`, `env.sh`, `.vscode/`, `.env`, `*.gguf`, `*.onnx`, `*.bin` (voir `.gitignore`).
-  Seule exception : `artifacts/*.onnx`, pour le modèle livré.
+  Exceptions : `arbre/artifacts/*.onnx` et les fichiers d'inférence des modèles livrés de `arbre/artifacts/models/` (liste dans `.gitignore`).
 - Pas de commit ni de push sans demande explicite. Vérifier `git status` avant d'éditer : d'autres sessions peuvent travailler en parallèle.
 - Ne rien supprimer sous `data/` sans le dire.
+- Ne pas lancer de commande qui réécrit un fichier de `results/` (démo, bench…) juste pour tester : il est cité ailleurs.
 
-## Décisions prises
+## Environnement local (racine du dépôt, partagé)
+- `.venv/` : Python 3.12 (polars, lightgbm, numpy, jinja2, rich, llama_cpp_python) ; `source env.sh`.
+- `models/` : LLM GGUF locaux (qwen3.5-0.8b/2b/4b, lfm2.5-350m/1.2b, gemma-4-e2b), utilisés pour les rapports.
+- qemu-aarch64 sans droits root : `cd tools/qemu && apt-get download qemu-user && dpkg -x qemu-user_*.deb extracted` (binaire statique `tools/qemu/extracted/usr/bin/qemu-aarch64`).
+- Tâches longues ou gourmandes (bench LLM, entraînement) : les lancer sous plafond mémoire
+  (`systemd-run --user --scope -p MemoryMax=12G -p MemorySwapMax=0 …`) et écrire les logs hors de `/tmp`. Le PC a gelé le 2026-10-27 pendant un bench LLM lancé sans plafond.
+
+## Décisions prises (communes)
 Format : `AAAA-MM-JJ : décision. Raison (critère de la grille).`
+- 2026-10-26 : découpage temporel : train 01–06/09, validation 07–08/09, test 09–10/09, traîne 11–18/09 évaluée à part ; « protocole littérature » (test du 09/09 à la fin, traîne comprise) rapporté séparément. C'est le découpage par jours de Multi-GNN (60/20/20), recalculé. Raison : comparabilité avec l'état de l'art sans mélanger la traîne au test, et entre les solutions du dépôt (qualité technique).
+- 2026-10-26 : `data/SOURCES.md` versionné grâce à `data/*` + `!data/SOURCES.md` dans `.gitignore` (sinon jamais committé).
+- 2026-10-27 : dépôt découpé par solution : `arbre/` pour la forêt d'arbres, un autre dossier pour les réseaux de neurones ; `data/`, `models/`, `.venv/`, `tools/` et `scripts/get_data*.sh` restent à la racine, partagés. Raison : deux équipes poussent dans le même dépôt (présentation, démo).

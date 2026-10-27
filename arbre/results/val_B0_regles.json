@@ -1,0 +1,39 @@
+{
+  "run": {
+    "date": "2026-10-26T17:04:17+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "name": "B0_regles",
+  "variant": "HI-Small",
+  "split": "val",
+  "features": "89103fff278f",
+  "rules": {
+    "eventail_sortant": 6,
+    "chaine_de_passage": 1,
+    "cycle": 2,
+    "dispersion_collecte": 1
+  },
+  "val": {
+    "tp": 335,
+    "fp": 643,
+    "fn": 701,
+    "n_alerts": 978,
+    "precision": 0.3425357873210634,
+    "recall": 0.3233590733590734,
+    "f1": 0.33267130089374386
+  }
+}

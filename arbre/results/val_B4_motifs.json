@@ -1,0 +1,50 @@
+{
+  "run": {
+    "date": "2026-10-26T17:16:32+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "name": "B4_motifs",
+  "families": [
+    "tx",
+    "profile",
+    "relation",
+    "degree",
+    "motif"
+  ],
+  "n_features": 78,
+  "neg_rate": 0.25,
+  "features": "89103fff278f",
+  "runs": [
+    {
+      "seed": 42,
+      "best_iteration": 1443,
+      "train_rows": 814479,
+      "train_seconds": 398.9,
+      "val_pr_auc": 0.6081182749863004,
+      "val_best_f1": {
+        "threshold": 0.6975348054800762,
+        "f1": 0.643151087595532,
+        "precision": 0.8225563909774436,
+        "recall": 0.527992277992278
+      }
+    }
+  ],
+  "val_f1_mean": 0.643151087595532,
+  "val_f1_std": 0.0,
+  "val_pr_auc_mean": 0.6081182749863004,
+  "val_pr_auc_std": 0.0
+}

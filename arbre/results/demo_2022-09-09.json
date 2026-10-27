@@ -1,0 +1,117 @@
+{
+  "run": {
+    "date": "2026-10-27T09:11:44+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "start": "2022-09-09",
+  "days": 1,
+  "n_tx": 654467,
+  "n_alerts": 288,
+  "n_cases": 158,
+  "replay_seconds": 5.311731007999924,
+  "engine_tx_per_s": 141057.06374718656,
+  "cascade": true,
+  "review_j1": {
+    "candidates": 1451,
+    "alerts": 287,
+    "new_alerts": 33,
+    "new_true": 14,
+    "seconds": 0.562216626999998
+  },
+  "top_cases": [
+    {
+      "case": "C08-0001",
+      "priority": 1.0,
+      "typology": "Collecte puis dispersion (gather-scatter)",
+      "n_alerts": 9,
+      "usd": 79761316.02246094,
+      "report_seconds": 3.9929720129998714
+    },
+    {
+      "case": "C08-0002",
+      "priority": 1.0,
+      "typology": "Collecte puis dispersion (gather-scatter)",
+      "n_alerts": 4,
+      "usd": 62956.810546875,
+      "report_seconds": 0.22506161300020722
+    },
+    {
+      "case": "C08-0003",
+      "priority": 0.9999999999999999,
+      "typology": "Dispersion puis collecte (scatter-gather)",
+      "n_alerts": 6,
+      "usd": 58788.03955078125,
+      "report_seconds": 0.24121475700007977
+    },
+    {
+      "case": "C08-0004",
+      "priority": 0.9999999999999999,
+      "typology": "Dispersion puis collecte (scatter-gather)",
+      "n_alerts": 5,
+      "usd": 53784.4189453125,
+      "report_seconds": 0.2496516009998686
+    },
+    {
+      "case": "C08-0005",
+      "priority": 0.9999999999999997,
+      "typology": "Dispersion puis collecte (scatter-gather)",
+      "n_alerts": 4,
+      "usd": 56948.9111328125,
+      "report_seconds": 0.22920508800007156
+    },
+    {
+      "case": "C08-0006",
+      "priority": 0.9999999999999724,
+      "typology": "Dispersion puis collecte (scatter-gather)",
+      "n_alerts": 5,
+      "usd": 35201.51708984375,
+      "report_seconds": 0.2321850280000035
+    },
+    {
+      "case": "C08-0007",
+      "priority": 0.9999999999999636,
+      "typology": "Dispersion puis collecte (scatter-gather)",
+      "n_alerts": 5,
+      "usd": 53176.75390625,
+      "report_seconds": 0.23683566800013978
+    },
+    {
+      "case": "C08-0008",
+      "priority": 0.9999999999981642,
+      "typology": "Dispersion puis collecte (scatter-gather)",
+      "n_alerts": 3,
+      "usd": 26885.244873046875,
+      "report_seconds": 0.2350146329999916
+    },
+    {
+      "case": "C08-0009",
+      "priority": 0.999999999995742,
+      "typology": "Dispersion puis collecte (scatter-gather)",
+      "n_alerts": 5,
+      "usd": 47971.0625,
+      "report_seconds": 0.22963037400018038
+    },
+    {
+      "case": "C08-0010",
+      "priority": 0.999999999994145,
+      "typology": "Chaîne de passage aléatoire (random)",
+      "n_alerts": 4,
+      "usd": 61806.0029296875,
+      "report_seconds": 0.22918511000011677
+    }
+  ]
+}

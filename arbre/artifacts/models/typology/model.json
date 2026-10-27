@@ -1,0 +1,31 @@
+{
+  "classes": [
+    "FAN-OUT",
+    "FAN-IN",
+    "CYCLE",
+    "GATHER-SCATTER",
+    "SCATTER-GATHER",
+    "BIPARTITE",
+    "STACK",
+    "RANDOM",
+    "OTHER"
+  ],
+  "best_iteration": 108,
+  "n_train": 2530,
+  "n_val": 1036,
+  "val_accuracy": 0.7152509652509652,
+  "val_macro_f1": 0.5566495371418032,
+  "val_f1_by_class": {
+    "FAN-OUT": 0.42857142857142855,
+    "FAN-IN": 0.6346153846153846,
+    "CYCLE": 0.46551724137931033,
+    "GATHER-SCATTER": 0.7236180904522613,
+    "SCATTER-GATHER": 0.7157894736842105,
+    "BIPARTITE": 0.24742268041237114,
+    "STACK": 0.5904761904761905,
+    "RANDOM": 0.2608695652173913,
+    "OTHER": 0.9429657794676806
+  },
+  "forest_bytes": 309204,
+  "engine_features_digest": "89103fff278f"
+}

@@ -1,0 +1,68 @@
+# Projet de déclaration de soupçon — dossier {{ f.case_id }}
+
+> Document **pré-rempli automatiquement** à partir de faits calculés par le système de détection ; il doit être
+> vérifié, complété et validé par un analyste habilité avant toute transmission à Tracfin (plateforme ERMES).
+> Données synthétiques (jeu IBM AML) : aucune personne réelle n'est concernée.
+
+| | |
+|---|---|
+| Priorité | rang **{{ f.priority_rank }}** du jour — score maximal {{ f.max_score_pct }}, {{ f.totals.n_ops }} alerte(s) |
+| Typologie probable | **{{ f.typology.label }}** — confiance {{ f.typology.proba_pct }} |
+| Période des opérations | du {{ f.period.start }} au {{ f.period.end }} |
+| Opérations / comptes | {{ f.totals.n_ops }} opérations, {{ f.totals.n_accounts }} comptes |
+| Montant total | {{ f.totals.usd_fmt }} (contre-valeur USD) |
+| Mode de détection | {{ f.model.mode_label }} — généré le {{ f.generated }} |
+
+## 1. Déclarant
+- Établissement déclarant : *[à compléter]*
+- Correspondant / déclarant Tracfin : *[à compléter]*
+- Référence interne du dossier : {{ f.case_id }}
+
+## 2. Personnes et comptes concernés
+| Compte | Rôle | Banque | Pays | Titulaire | Comptes de l'entité | Opérations |
+|---|---|---|---|---|---|---|
+{% for a in f.accounts -%}
+| `{{ a.id }}` | {{ a.role }} | {{ a.bank }} | {{ a.country }} | {{ a.entity }} | {{ a.entity_accounts }} | {{ a.n_ops }} |
+{% endfor %}
+
+## 3. Opérations signalées
+| Date | Émetteur | Destinataire | Montant | Moyen | Contre-valeur USD | Score |
+|---|---|---|---|---|---|---|
+{% for o in f.operations -%}
+| {{ o.date }} | `{{ o.src }}` | `{{ o.dst }}` | {{ o.amount_fmt }} {{ o.currency }} | {{ o.format }} | {{ o.usd_fmt }} | {{ o.score_pct }} |
+{% endfor %}
+
+## 4. Analyse du soupçon
+{{ f.analysis_text }}
+
+**Indicateurs déclenchés**
+{% for i in f.indicators -%}
+- {{ i.text }}
+{% else -%}
+- aucun indicateur à règle fixe : alerte portée par la combinaison des signaux ci-dessous
+{% endfor %}
+
+
+**Principaux éléments ayant motivé l'alerte** (contributions du modèle, méthode {{ f.model.method }})
+{% for r in f.reasons if not r.context -%}
+- *{{ r.family }}* : {{ r.text }}{{ (" — " ~ r.percentile_txt) if r.percentile_txt else "" }}
+{% endfor %}
+{% set ctx = f.reasons | selectattr("context") | list -%}
+{{ ("- *Contexte de l'opération* : " ~ (ctx | map(attribute="text") | join(" ; "))) if ctx else "" }}
+
+{% if f.evidence_lines -%}
+**Éléments structurels reconstitués**
+{% for l in f.evidence_lines -%}
+- {{ l }}
+{% endfor %}
+{% endif %}
+
+
+## 5. Éléments d'appréciation
+- Score de suspicion le plus élevé du dossier : {{ f.max_score_pct }} (seuil d'alerte : {{ f.threshold_pct }}).
+- Probabilité que le dossier contienne au moins une opération illicite (calibrée, alertes supposées indépendantes) : {{ f.priority_pct }}.
+- Seules les opérations antérieures ou simultanées aux alertes ont été utilisées (analyse causale).
+
+## 6. Limites
+- Pré-analyse automatique : la qualification juridique du soupçon relève de l'analyste.
+- Les montants, dates et identifiants proviennent exclusivement des données ; {{ f.narrative_note }}

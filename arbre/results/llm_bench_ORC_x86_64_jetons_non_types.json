@@ -1,0 +1,59 @@
+{
+  "run": {
+    "date": "2026-10-27T08:29:57+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "n_dossiers": 10,
+  "n_threads": 4,
+  "machine": "x86_64",
+  "models": {
+    "Qwen3.5-0.8B-Q4_K_M.gguf": {
+      "load_s": 1.8730029350263067,
+      "latency_s_median": 25.664144865004346,
+      "acceptance_rate": 0.9,
+      "rejections": [
+        "texte peu ancré (4/10 valeurs reprises)"
+      ],
+      "example": "La relation entre les comptes 09/09/2022 00:47 et 09/09/2022 16:34, ainsi que le fait que les comptes 10 et 9 ont réalisé des opérations signalées pour un total de 79 761 316,02 USD, sont rapprochés de la typologie « Collecte puis dispersion (gather-scatter) » et confèrent à la confiance 78 %. Les éléments les plus déterminants sont la première relation entre ces deux comptes, le fait que 3 réinvestissements internes de l'émetteur et la dernière réception du destinataire qui a eu 2,7 h. Le compte `029685:80F576BB0` a reçu de 6 émetteurs distincts en 96 h (13 virements ACH), ce qui est inhabituel au regard de l'activité passée des comptes et justifie un examen approfondi et une déclaration de soupçon."
+    },
+    "LFM2.5-1.2B-Instruct-Q4_K_M.gguf": {
+      "load_s": 1.5228215559618548,
+      "latency_s_median": 21.113266489002854,
+      "acceptance_rate": 0.0,
+      "rejections": [
+        "texte peu ancré (0/12 valeurs reprises)",
+        "texte peu ancré (0/17 valeurs reprises)",
+        "texte peu ancré (0/11 valeurs reprises)",
+        "texte peu ancré (0/16 valeurs reprises)",
+        "texte peu ancré (0/10 valeurs reprises)",
+        "texte peu ancré (0/11 valeurs reprises)",
+        "texte peu ancré (0/12 valeurs reprises)",
+        "texte peu ancré (0/11 valeurs reprises)",
+        "texte peu ancré (0/13 valeurs reprises)",
+        "texte peu ancré (0/15 valeurs reprises)"
+      ],
+      "example": null
+    },
+    "Qwen3.5-2B-Q4_K_M.gguf": {
+      "load_s": 2.8443604960339144,
+      "latency_s_median": 47.630593851034064,
+      "acceptance_rate": 1.0,
+      "rejections": [],
+      "example": "Du 09/09/2022 00:47 au 09/09/2022 16:34, 10 comptes ont réalisé 9 opérations signalées pour un total de 79 761 316,02 USD. Le schéma observé est rapproché de la typologie « Collecte puis dispersion (gather-scatter) » (confiance 78 %). Les éléments les plus déterminants sont : première relation entre ces deux comptes ; 3 réinvestissements internes de l'émetteur ; dernière réception du destinataire : il y a 2,7 h. Le compte `029685:80F576BB0` a reçu de 6 émetteurs distincts en 96 h (13 virements ACH). Ces éléments, inhabituels au regard de l'activité passée des comptes, justifient un examen approfondi et, le cas échéant, une déclaration de soupçon. Le compte `029685:80F576BB0` a reçu de 6 émetteurs distincts en 96 h (13 virements ACH)."
+    }
+  }
+}

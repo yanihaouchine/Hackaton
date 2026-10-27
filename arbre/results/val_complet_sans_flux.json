@@ -1,0 +1,51 @@
+{
+  "run": {
+    "date": "2026-10-26T17:39:22+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "name": "complet_sans_flux",
+  "families": [
+    "tx",
+    "kyc",
+    "profile",
+    "relation",
+    "degree",
+    "motif"
+  ],
+  "n_features": 86,
+  "neg_rate": 0.25,
+  "features": "89103fff278f",
+  "runs": [
+    {
+      "seed": 42,
+      "best_iteration": 1797,
+      "train_rows": 814479,
+      "train_seconds": 842.3,
+      "val_pr_auc": 0.6431539118920864,
+      "val_best_f1": {
+        "threshold": 0.8180807193150219,
+        "f1": 0.6598557692307692,
+        "precision": 0.8742038216560509,
+        "recall": 0.5299227799227799
+      }
+    }
+  ],
+  "val_f1_mean": 0.6598557692307692,
+  "val_f1_std": 0.0,
+  "val_pr_auc_mean": 0.6431539118920864,
+  "val_pr_auc_std": 0.0
+}

@@ -1,0 +1,89 @@
+{
+  "run": {
+    "date": "2026-10-27T05:49:16+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "main": "strict",
+  "cut_raw": -3.2653686907538018,
+  "keep_target": 0.99,
+  "n_trees": 60,
+  "n_nodes": 780,
+  "val_skip_rate": 0.9928215145351126,
+  "val_alerts_main": 621,
+  "val_alerts_lost": 7,
+  "val_true_alerts_lost": 7,
+  "val_main": {
+    "tp": 563,
+    "fp": 58,
+    "fn": 473,
+    "n_alerts": 621,
+    "precision": 0.9066022544283414,
+    "recall": 0.5434362934362934,
+    "f1": 0.6795413397706699
+  },
+  "val_cascade": {
+    "tp": 556,
+    "fp": 58,
+    "fn": 480,
+    "n_alerts": 614,
+    "precision": 0.9055374592833876,
+    "recall": 0.5366795366795367,
+    "f1": 0.673939393939394
+  },
+  "pre_train": {
+    "best_iteration": 60,
+    "val_pr_auc": 0.4827813231803294
+  },
+  "curve": [
+    {
+      "keep": 0.999,
+      "cut_raw": -10.239394443654385,
+      "skip_rate": 0.4813769517899089,
+      "alerts_lost": 1,
+      "f1": 0.6787439613526571
+    },
+    {
+      "keep": 0.995,
+      "cut_raw": -7.503921740690181,
+      "skip_rate": 0.852017143022856,
+      "alerts_lost": 4,
+      "f1": 0.6763460375075621
+    },
+    {
+      "keep": 0.99,
+      "cut_raw": -3.2653686907538018,
+      "skip_rate": 0.9928215145351126,
+      "alerts_lost": 7,
+      "f1": 0.673939393939394
+    },
+    {
+      "keep": 0.98,
+      "cut_raw": -1.9463579163561635,
+      "skip_rate": 0.9962372763390657,
+      "alerts_lost": 13,
+      "f1": 0.6690997566909976
+    },
+    {
+      "keep": 0.95,
+      "cut_raw": -1.1222751592046474,
+      "skip_rate": 0.9976800162398863,
+      "alerts_lost": 31,
+      "f1": 0.6629766297662977
+    }
+  ],
+  "cascade_bytes": 10676
+}

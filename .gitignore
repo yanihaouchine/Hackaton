@@ -1,11 +1,12 @@
 # Lourd / régénérable : ne jamais committer
-models/
+/models/
 *.gguf
 *.safetensors
 *.bin
 *.onnx
 tools/
 .venv/
+.venv-target/
 build*/
 
 # Python
@@ -20,8 +21,12 @@ compile_commands.json
 .cache/
 *.log
 
-# Données (régénérables via téléchargement Kaggle)
-data/
+# Données (régénérables via téléchargement Kaggle) ; seule la liste des sources est versionnée
+data/*
+!data/SOURCES.md
+
+# Sorties de démo et rapports générés (régénérables)
+out/
 
 # Fichiers temporaires / caches / secrets
 *.part
@@ -32,7 +37,15 @@ data/
 kaggle.json
 
 # Exception : le modèle livré (petit) est versionné
-!artifacts/*.onnx
+!arbre/artifacts/*.onnx
+
+# Modèles livrés : seuls les fichiers d'inférence de strict (temps réel), typology et j1 (revue J+1 de la démo)
+# sont versionnés ; lgbm.txt (8 Mo, régénérable par `python -m aml train`) et les variantes d'expérience restent locaux
+arbre/artifacts/models/*
+!arbre/artifacts/models/strict/
+!arbre/artifacts/models/typology/
+!arbre/artifacts/models/j1/
+arbre/artifacts/models/**/lgbm.txt
 
 # Configuration locale (propre à chaque poste)
 .vscode/

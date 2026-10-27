@@ -1,0 +1,49 @@
+{
+  "run": {
+    "date": "2026-10-26T17:09:52+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "name": "B3_degres",
+  "families": [
+    "tx",
+    "profile",
+    "relation",
+    "degree"
+  ],
+  "n_features": 71,
+  "neg_rate": 0.25,
+  "features": "89103fff278f",
+  "runs": [
+    {
+      "seed": 42,
+      "best_iteration": 291,
+      "train_rows": 814479,
+      "train_seconds": 97.1,
+      "val_pr_auc": 0.6071297956554423,
+      "val_best_f1": {
+        "threshold": 0.6443504766525465,
+        "f1": 0.6351735913488902,
+        "precision": 0.7739251040221914,
+        "recall": 0.5386100386100386
+      }
+    }
+  ],
+  "val_f1_mean": 0.6351735913488902,
+  "val_f1_std": 0.0,
+  "val_pr_auc_mean": 0.6071297956554423,
+  "val_pr_auc_std": 0.0
+}

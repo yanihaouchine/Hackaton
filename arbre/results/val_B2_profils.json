@@ -1,0 +1,48 @@
+{
+  "run": {
+    "date": "2026-10-26T17:08:14+00:00",
+    "commit": "f5275cf",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "ORC",
+      "arch": "x86_64",
+      "cpu": "Intel(R) Xeon(R) W-1270 CPU @ 3.40GHz",
+      "n_cpus": 16,
+      "python": "3.12.15"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0"
+    }
+  },
+  "name": "B2_profils",
+  "families": [
+    "tx",
+    "profile",
+    "relation"
+  ],
+  "n_features": 63,
+  "neg_rate": 0.25,
+  "features": "89103fff278f",
+  "runs": [
+    {
+      "seed": 42,
+      "best_iteration": 684,
+      "train_rows": 814479,
+      "train_seconds": 203.3,
+      "val_pr_auc": 0.6120980969239381,
+      "val_best_f1": {
+        "threshold": 0.674138559384402,
+        "f1": 0.6433649289099527,
+        "precision": 0.8328220858895705,
+        "recall": 0.5241312741312741
+      }
+    }
+  ],
+  "val_f1_mean": 0.6433649289099527,
+  "val_f1_std": 0.0,
+  "val_pr_auc_mean": 0.6120980969239381,
+  "val_pr_auc_std": 0.0
+}
