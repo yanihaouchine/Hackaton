@@ -17,6 +17,20 @@ Le dépôt accueille plusieurs solutions ; celle-ci (forêt d'arbres) est dans `
 à la racine du dépôt : `data/` (jeu IBM AML et fichiers dérivés), `models/` (GGUF), `.venv/` et `scripts/get_data*.sh`.
 Les commandes ci-dessous se lancent depuis `arbre/`.
 
+### Deux phases, deux machines
+La frugalité revendiquée concerne **l'inférence** : le rejeu du flux, le scoring, les cas et les rapports. La préparation des données et l'entraînement sont une phase **hors ligne**, plus gourmande, menée une fois sur un poste de développement ; ses produits (flux préparé, modèles, instantané d'état) sont ensuite copiés sur la cible.
+
+| | Phase hors ligne (poste de développement) | Phase d'inférence (cible frugale) |
+|---|---|---|
+| Rôle | préparer le flux, calculer les features, entraîner, choisir les seuils, évaluer | rejouer le flux, scorer, regrouper en cas, rédiger les rapports, répondre à l'analyste |
+| Commandes | `prepare`, `features`, `rules`, `ablate`, `train`, `cascade`, `typology`, `evaluate`, `explain-eval`, `summarize`, `pytest` | `bench`, `demo`, `ask` |
+| Dépendances | numpy, polars, lightgbm, scikit-learn (extra `train`) | numpy et le moteur C ; jinja2, rich, markdown-it-py pour les rapports et la démo ; lightgbm en option (TreeSHAP) |
+| Mémoire | charge le CSV complet en RAM (tri, encodage) : prévoir plusieurs Go | état borné du moteur (voir « Frugalité ») |
+| Matériel | CPU x86-64 ou ARM64 ; **aucun GPU requis** (LightGBM s'entraîne sur CPU) | OrangePi Zero 4, Jetson ou tout CPU x86-64/ARM64 |
+
+Sur un processeur x86 **sans AVX2** (Celeron, Atom, Pentium d'entrée de gamme), la wheel standard de polars plante à l'import (« Instruction non permise ») : installer `polars[rtcompat]` à la place. La phase d'inférence n'utilise pas polars et n'est pas concernée.
+
+### Phase hors ligne (poste de développement)
 ```bash
 ../scripts/get_data.sh HI-Small              # données Kaggle (publiques), dans ../data/raw/
 python -m aml prepare                        # CSV → flux trié et encodé (≈ 15 s)
@@ -29,18 +43,23 @@ python -m aml typology                       # classifieur de typologie
 python -m aml train --name j1 --hindsight    # modèle « revue J+1 »
 python -m aml evaluate --model strict --splits test,tail,test_lit   # test : lu une seule fois
 python -m aml explain-eval                   # fidélité et couverture des explications
+python -m aml summarize                      # tableaux Markdown à partir de results/
+pytest                                       # causalité, équivalence C/Python, forêt, garde LLM, portabilité aarch64
+```
+
+### Phase d'inférence (frugale)
+Sur la cible ou sur le poste de développement, à partir des produits de la phase hors ligne :
+```bash
 python -m aml bench                          # frugalité (débit, latences, RAM, tailles, énergie)
 python -m aml demo --from 2022-09-09         # rejeu en direct + cas + rapports (out/demo/index.html)
 python -m aml ask C08-0001 "Pourquoi ce cas ?"   # assistant d'analyse
-python -m aml summarize                      # tableaux Markdown à partir de results/
-pytest                                       # causalité, équivalence C/Python, forêt, garde LLM, portabilité aarch64
 ```
 
 ### Sur la carte cible (OrangePi Zero 4, Jetson)
 Aucun entraînement sur la carte : on copie le code, le flux préparé (≈ 290 Mo), les modèles (≈ 12 Mo) et, en option, l'instantané d'état (≈ 170 Mo), qui évite de rejouer l'historique.
 
 ```bash
-cd .. && rsync -aR --exclude out --exclude build --exclude 'artifacts/models/*/lgbm.txt' \
+cd .. && rsync -aR --exclude out --exclude build \
       arbre data/processed/HI-Small data/state cible:Hackathon/   # depuis la racine du dépôt, sur le poste de développement
 ssh cible 'cd Hackathon/arbre && scripts/target_setup.sh venv && scripts/target_setup.sh build'
 ssh cible 'cd Hackathon/arbre && scripts/target_setup.sh bench'   # wattmètre : repos 60 s, puis pendant le rejeu

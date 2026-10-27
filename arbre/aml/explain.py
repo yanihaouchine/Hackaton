@@ -199,6 +199,8 @@ def contributions(bundle, x: np.ndarray) -> tuple[np.ndarray, str]:
     try:
         import lightgbm as lgb
 
+        if not bundle.lgbm_path().exists():  # non livré ou non régénéré : repli Saabas
+            raise FileNotFoundError(bundle.lgbm_path())
         b = lgb.Booster(model_file=str(bundle.lgbm_path()))
         c = b.predict(x[:, bundle.cols], pred_contrib=True)
         out = np.zeros((len(x), nf + 1))

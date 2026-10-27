@@ -60,6 +60,13 @@ def _cmd_train(a: argparse.Namespace) -> None:
     print(json.dumps({k: v for k, v in res.items() if k != "runs"}, indent=2, ensure_ascii=False)[:3000])
 
 
+def _cmd_export_lgbm(a: argparse.Namespace) -> None:
+    from aml.experiments import export_lgbm
+
+    for name in a.models.split(","):
+        print(json.dumps(export_lgbm(a.variant, name), ensure_ascii=False), flush=True)
+
+
 def _cmd_evaluate(a: argparse.Namespace) -> None:
     from aml.experiments import evaluate_model
 
@@ -221,6 +228,11 @@ def main(argv: list[str] | None = None) -> None:
     s.add_argument("--model", default="strict")
     s.add_argument("--split", default="val")
     s.set_defaults(func=_cmd_explain_eval)
+
+    s = sub.add_parser("export-lgbm", help="régénère lgbm.txt (TreeSHAP) des modèles livrés, forêt vérifiée identique")
+    s.add_argument("--variant", default=DEFAULT_VARIANT)
+    s.add_argument("--models", default="strict,j1")
+    s.set_defaults(func=_cmd_export_lgbm)
 
     s = sub.add_parser("cascade", help="mini-modèle de pré-filtrage (cascade), seuil fixé sur la validation")
     s.add_argument("--variant", default=DEFAULT_VARIANT)
