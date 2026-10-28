@@ -1,0 +1,142 @@
+{
+  "run": {
+    "date": "2026-10-28T09:40:38+00:00",
+    "commit": "5ae2d4c",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.1",
+      "onnxruntime": "1.31.1"
+    },
+    "feature_digest": "03a26672a4ef",
+    "variant": "HI-Small"
+  },
+  "written": "2026-10-28T10:40:38",
+  "model": "hist_h64-32_g16_s42",
+  "split": "val",
+  "method": "gradient × entrée (features et transactions passées)",
+  "faithfulness": {
+    "1": {
+      "k": 1,
+      "n_alerts": 650,
+      "share_below_threshold_after": {
+        "features": 0.40307692307692305,
+        "features_random": 0.036923076923076927,
+        "history": 0.21076923076923076,
+        "history_random": 0.023076923076923078
+      },
+      "min_valid_events": 1,
+      "median_score_before": 0.9893081188201904
+    },
+    "3": {
+      "k": 3,
+      "n_alerts": 650,
+      "share_below_threshold_after": {
+        "features": 0.76,
+        "features_random": 0.06769230769230769,
+        "history": 0.23384615384615384,
+        "history_random": 0.04923076923076923
+      },
+      "min_valid_events": 2,
+      "median_score_before": 0.9893081188201904
+    },
+    "5": {
+      "k": 5,
+      "n_alerts": 650,
+      "share_below_threshold_after": {
+        "features": 0.9015384615384615,
+        "features_random": 0.09384615384615384,
+        "history": 0.2276923076923077,
+        "history_random": 0.09692307692307692
+      },
+      "min_valid_events": 2,
+      "median_score_before": 0.9893081188201904
+    }
+  },
+  "example": {
+    "tx_index": 3529759,
+    "score": 0.9999996423721313,
+    "features": [
+      {
+        "feature": "f_chain_age",
+        "text": "chaîne de transferts commencée il y a 2,1 j",
+        "contribution": 1.8208918571472168,
+        "percentile": NaN
+      },
+      {
+        "feature": "r_dist_in",
+        "text": "le destinataire a reçu de 12 émetteurs distincts depuis le début du flux",
+        "contribution": 1.2577354907989502,
+        "percentile": 0.9911842105263158
+      },
+      {
+        "feature": "g_s_outdeg_m",
+        "text": "l'émetteur a payé 2 bénéficiaires distincts en 24 h (ACH)",
+        "contribution": 1.2217113971710205,
+        "percentile": 0.95
+      },
+      {
+        "feature": "f_n_match10",
+        "text": "1 entrées récentes de l'émetteur à ±10 % de ce montant",
+        "contribution": 0.924014687538147,
+        "percentile": 0.9944999999999999
+      },
+      {
+        "feature": "f_chain_depth",
+        "text": "maillon n°2 d'une chaîne de transferts de montants quasi identiques",
+        "contribution": 0.8107097148895264,
+        "percentile": 0.999
+      },
+      {
+        "feature": "kyc_s_nacc",
+        "text": "l'entité émettrice détient 2 254 comptes",
+        "contribution": 1.716539978981018,
+        "percentile": 0.9404651162790697
+      },
+      {
+        "feature": "tx_is_ach",
+        "text": "virement ACH",
+        "contribution": 1.0197571516036987,
+        "percentile": NaN
+      },
+      {
+        "feature": "tx_log_usd",
+        "text": "montant de 18 819,19 USD",
+        "contribution": 0.998916745185852,
+        "percentile": 0.8296992686235037
+      }
+    ],
+    "history": [
+      {
+        "side": "src",
+        "tx_index": 3529757,
+        "contribution": 1.709439992904663,
+        "text": "dans la même minute : auto-virement de 21 322,20 USD (ACH, change de devise)"
+      },
+      {
+        "side": "src",
+        "tx_index": 3529758,
+        "contribution": 0.3512895107269287,
+        "text": "dans la même minute : l'émetteur a envoyé 2 503,01 USD au compte 0222664:80D7EC5F0 (ACH, même contrepartie que l'opération)"
+      },
+      {
+        "side": "dst",
+        "tx_index": 3529758,
+        "contribution": 0.03374522924423218,
+        "text": "dans la même minute : le destinataire a reçu 2 503,01 USD du compte 0048211:811C42F00 (ACH, même contrepartie que l'opération)"
+      }
+    ],
+    "share_history": 0.0975942450604554
+  }
+}

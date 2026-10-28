@@ -16,12 +16,16 @@ from mlp.train import Scorer
 
 
 def owners(scorer: Scorer) -> np.ndarray:
-    """Pour chaque entrée du réseau, l'indice de la feature brute (parmi les colonnes du modèle) dont elle vient.
+    """Pour chaque entrée du réseau, l'indice de la feature brute (parmi les colonnes du modèle) dont elle vient."""
+    return prep_owners(scorer.net.prep)
+
+
+def prep_owners(p) -> np.ndarray:
+    """Même chose à partir du prétraitement seul (sert aussi au modèle séquentiel).
 
     Même ordre que `Prep.forward` : numériques, indicateurs « absent », indicateurs « aucun appariement »,
     one-hot, puis sinus et cosinus de l'heure.
     """
-    p = scorer.net.prep
     num = p.num_idx.numpy()
     own = list(num) + list(num[p.miss_idx.numpy()]) + list(num[p.nomatch_idx.numpy()])
     for j, size in p.cat:
