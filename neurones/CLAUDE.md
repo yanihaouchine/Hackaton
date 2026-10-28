@@ -3,7 +3,7 @@
 Complète le `CLAUDE.md` de la racine (sujet, grille, données, principes, règles de travail), qui s'applique aussi ici.
 État actuel : MLP 64→32 (v2) entraîné, exporté en ONNX, évalué une fois sur le test ; présentation et commandes dans `README.md`.
 Code dans `mlp/` (`python -m mlp.<module>` depuis `neurones/`), tests dans `tests/`, chiffres dans `results/`,
-modèles régénérables dans `artifacts/` (hors git). La v1 (MLP 128→64) est conservée dans `results/v1/` ; son code est au commit `0c12204`.
+modèles régénérables dans `artifacts/` (hors git, sauf les deux modèles livrés : `h64-32_n100_s42/` et `hist_h64-32_g16_s42/`). La v1 (MLP 128→64) est conservée dans `results/v1/` ; son code est au commit `0c12204`.
 Livrables indépendants du modèle : `rapport/` (rapport TRACFIN, garde-fou, LLM sous garde) et `interface/` (démo Streamlit).
 Répartition : Youssef a la partie modèle (`mlp/`, `scripts/build_db.py`) ; Anas a `rapport/` et `interface/`.
 

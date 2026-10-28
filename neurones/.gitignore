@@ -1,2 +1,8 @@
-# Modèles entraînés : régénérables par scripts/train.py puis scripts/export.py
-artifacts/
+# Modèles entraînés : régénérables par `python -m mlp.train` et `python -m mlp.train_hist` (voir README).
+# Exception : les deux modèles livrés (≈ 340 Ko) sont versionnés, pour que la démo tourne depuis un clone.
+# Les règles d'ici priment sur le .gitignore de la racine (qui ignore *.onnx).
+artifacts/*
+!artifacts/h64-32_n100_s42/
+!artifacts/hist_h64-32_g16_s42/
+!artifacts/h64-32_n100_s42/model.onnx
+!artifacts/hist_h64-32_g16_s42/model.onnx

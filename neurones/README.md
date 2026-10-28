@@ -209,7 +209,7 @@ bash neurones/interface/run.sh                            # PORT=8502 bash … p
 ```
 
 Dépendances (dans le `.venv` de la racine) : numpy, polars, torch (CPU, entraînement et explications), onnx, onnxruntime, matplotlib, duckdb (optionnel), jinja2 (rapport), streamlit 1.50.0 (démo uniquement : `pip install streamlit==1.50.0`).
-Les modèles (`artifacts/`) ne sont pas versionnés : ils se régénèrent avec `mlp.train` (déterministe : la seed 42 redonne un modèle identique).
+Seuls les deux modèles livrés sont versionnés (`artifacts/h64-32_n100_s42/` et `artifacts/hist_h64-32_g16_s42/`, ≈ 340 Ko), pour que la démo tourne depuis un clone ; les autres (`artifacts/`) se régénèrent avec `mlp.train` et `mlp.train_hist` (déterministes : la seed 42 redonne un modèle identique).
 
 **Règle d'or : le test ne s'évalue qu'une seule fois**, quand tout est figé. Taille, taux de licites, arrêt précoce et seuil se choisissent **sur la validation uniquement**. Relancer le test après avoir modifié le modèle, c'est tricher.
 
