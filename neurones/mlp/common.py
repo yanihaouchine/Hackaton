@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import platform
 import sys
 from datetime import datetime
@@ -12,8 +13,12 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent  # neurones/
 REPO = ROOT.parent  # racine du dépôt : data/ partagé
-RESULTS = ROOT / "results"
-ARTIFACTS = ROOT / "artifacts"
+# Variante du dataset : HI-Small par défaut ; une autre (AML_VARIANT=LI-Small) a ses propres sous-dossiers
+# de résultats et de modèles, pour ne jamais écraser ceux de HI-Small.
+VARIANT = os.environ.get("AML_VARIANT", "HI-Small")
+_SUB = "" if VARIANT == "HI-Small" else VARIANT
+RESULTS = ROOT / "results" / _SUB
+ARTIFACTS = ROOT / "artifacts" / _SUB
 
 # Code de arbre/ utilisé en lecture seule (données préparées, sous-échantillonnage, métriques).
 sys.path.insert(0, str(REPO / "arbre"))
@@ -22,7 +27,6 @@ from aml.evaluate import best_f1_threshold, evaluate, pr_auc  # noqa: E402, F401
 from aml.provenance import run_info  # noqa: E402
 from aml.train import subsample_rows  # noqa: E402, F401
 
-VARIANT = "HI-Small"
 # Empreinte des features du moteur de arbre/ (config + noms) : celle de leur modèle livré.
 FEATURE_DIGEST = "03a26672a4ef"
 EXCLUDED_PREFIXES = ("z_", "h_")  # z_ : scores de la forêt ; h_ : informations postérieures
@@ -46,11 +50,18 @@ def load_stream(variant: str = VARIANT):
 
 def provenance(seed: int) -> dict:
     info = run_info(seed)
-    import torch
+    from importlib.metadata import PackageNotFoundError, version
 
-    info["versions"]["torch"] = torch.__version__
+    # Version lue sans importer les paquets : torch et lightgbm embarquent chacun leur libomp sur macOS,
+    # et les charger dans le même processus le fait échouer.
+    for pkg in ("torch", "onnxruntime", "lightgbm"):
+        try:
+            info["versions"][pkg] = version(pkg)
+        except PackageNotFoundError:
+            pass
     info["machine"]["platform"] = platform.platform()
     info["feature_digest"] = FEATURE_DIGEST
+    info["variant"] = VARIANT
     return info
 
 

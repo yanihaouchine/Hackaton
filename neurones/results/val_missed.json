@@ -1,0 +1,139 @@
+{
+  "run": {
+    "date": "2026-10-27T17:17:46+00:00",
+    "commit": "3da30be",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
+  },
+  "written": "2026-10-27T18:17:46",
+  "model": "h64-32_n100_s42",
+  "split": "val",
+  "n": {
+    "missed": 431,
+    "caught": 605
+  },
+  "non_pattern_share": {
+    "missed": 0.8584686774941995,
+    "caught": 0.01487603305785124
+  },
+  "by_typology_missed_over_total": {
+    "FAN-OUT": "4/64",
+    "FAN-IN": "7/60",
+    "CYCLE": "2/66",
+    "GATHER-SCATTER": "4/96",
+    "SCATTER-GATHER": "6/134",
+    "BIPARTITE": "11/49",
+    "STACK": "26/150",
+    "RANDOM": "1/38"
+  },
+  "by_format": {
+    "ACH": {
+      "missed": 285,
+      "caught": 605
+    },
+    "Bitcoin": {
+      "missed": 12,
+      "caught": 0
+    },
+    "Cash": {
+      "missed": 25,
+      "caught": 0
+    },
+    "Cheque": {
+      "missed": 59,
+      "caught": 0
+    },
+    "Credit Card": {
+      "missed": 50,
+      "caught": 0
+    }
+  },
+  "amount_usd_median": {
+    "missed": 2647.5087890625,
+    "caught": 10914.8671875
+  },
+  "first_tx_of_attempt_share": {
+    "missed": 0.26229508196721313,
+    "caught": 0.08053691275167785
+  },
+  "history": {
+    "sender_prior_tx_median": {
+      "missed": 17.0,
+      "caught": 23.0
+    },
+    "receiver_prior_tx_median": {
+      "missed": 15.0,
+      "caught": 19.0
+    },
+    "sender_no_history_share": {
+      "missed": 0.11136890951276102,
+      "caught": 0.03140495867768595
+    },
+    "receiver_no_history_share": {
+      "missed": 0.048723897911832945,
+      "caught": 0.0859504132231405
+    },
+    "sender_8plus_prior_tx_share": {
+      "missed": 0.6403712296983759,
+      "caught": 0.7487603305785124
+    },
+    "receiver_8plus_prior_tx_share": {
+      "missed": 0.6774941995359629,
+      "caught": 0.7057851239669422
+    },
+    "chain_depth_positive_share": {
+      "missed": 0.01160092807424594,
+      "caught": 0.371900826446281
+    }
+  },
+  "score_median": {
+    "missed": {
+      "mlp": 0.013190031051635742,
+      "forest": 0.014411328573063528
+    },
+    "caught": {
+      "mlp": 0.9813895225524902,
+      "forest": 0.9975415208593097
+    }
+  },
+  "thresholds": {
+    "mlp": 0.2929190993309021,
+    "forest": 0.8289875082247798
+  },
+  "account_past": {
+    "missed": {
+      "n": 431,
+      "account_in_earlier_illicit": 0.3990719257540603,
+      "account_in_earlier_alert": 0.4037122969837587
+    },
+    "missed_non_pattern": {
+      "n": 370,
+      "account_in_earlier_illicit": 0.41621621621621624,
+      "account_in_earlier_alert": 0.4189189189189189
+    },
+    "caught": {
+      "n": 605,
+      "account_in_earlier_illicit": 0.824793388429752,
+      "account_in_earlier_alert": 0.8016528925619835
+    },
+    "licit": {
+      "n": 964488,
+      "account_in_earlier_illicit": 0.12379314206086546,
+      "account_in_earlier_alert": 0.1256200180821327
+    }
+  }
+}

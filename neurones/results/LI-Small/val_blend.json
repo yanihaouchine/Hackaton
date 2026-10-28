@@ -1,0 +1,184 @@
+{
+  "run": {
+    "date": "2026-10-27T17:51:33+00:00",
+    "commit": "3da30be",
+    "dirty": true,
+    "seed": 42,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.1",
+      "onnxruntime": "1.31.1"
+    },
+    "feature_digest": "03a26672a4ef",
+    "variant": "LI-Small"
+  },
+  "written": "2026-10-27T18:51:33",
+  "model": "h64-32_n100_s42",
+  "forest": "strict réentraînée (LI-Small)",
+  "split": "val",
+  "method": "avant de voir les résultats :\n- score = w × log-cote(forêt) + (1 − w) × log-cote(MLP), w de 0 à 1 par pas de 0,05 ;\n- w choisi sur la PR-AUC de validation ; seuil au F1 maximal de validation (comme pour les modèles seuls) ;\n- contrôle croisé par jour : w et seuil choisis sur le 07/09, mesurés sur le 08/09, et l'inverse, face à la\n  forêt seule (seuil choisi de la même façon) sur le même jour.",
+  "grid": [
+    {
+      "w": 0.0,
+      "pr_auc": 0.28471869561338603
+    },
+    {
+      "w": 0.05,
+      "pr_auc": 0.2884435617248052
+    },
+    {
+      "w": 0.1,
+      "pr_auc": 0.29161799902589725
+    },
+    {
+      "w": 0.15,
+      "pr_auc": 0.29408418669892006
+    },
+    {
+      "w": 0.2,
+      "pr_auc": 0.29638185776814274
+    },
+    {
+      "w": 0.25,
+      "pr_auc": 0.2982358157587946
+    },
+    {
+      "w": 0.3,
+      "pr_auc": 0.2995279465098238
+    },
+    {
+      "w": 0.35,
+      "pr_auc": 0.30028230938321154
+    },
+    {
+      "w": 0.4,
+      "pr_auc": 0.30023639178286904
+    },
+    {
+      "w": 0.45,
+      "pr_auc": 0.29972278846568307
+    },
+    {
+      "w": 0.5,
+      "pr_auc": 0.2989524921594615
+    },
+    {
+      "w": 0.55,
+      "pr_auc": 0.2984527534506154
+    },
+    {
+      "w": 0.6,
+      "pr_auc": 0.2974455273837126
+    },
+    {
+      "w": 0.65,
+      "pr_auc": 0.29654931439306054
+    },
+    {
+      "w": 0.7,
+      "pr_auc": 0.29576693998403064
+    },
+    {
+      "w": 0.75,
+      "pr_auc": 0.29461691301616766
+    },
+    {
+      "w": 0.8,
+      "pr_auc": 0.2928528585562117
+    },
+    {
+      "w": 0.85,
+      "pr_auc": 0.2909991301722428
+    },
+    {
+      "w": 0.9,
+      "pr_auc": 0.2886322699849976
+    },
+    {
+      "w": 0.95,
+      "pr_auc": 0.28597737786679284
+    },
+    {
+      "w": 1.0,
+      "pr_auc": 0.28313558140583356
+    }
+  ],
+  "full_val": {
+    "w": 0.35,
+    "threshold": -1.3696802186480916,
+    "pr_auc": 0.30028230938321154,
+    "tp": 181,
+    "fp": 114,
+    "fn": 589,
+    "precision": 0.6135593220338983,
+    "recall": 0.23506493506493506,
+    "f1": 0.33990610328638493,
+    "forest_alone": {
+      "pr_auc": 0.28313558140583356,
+      "tp": 162,
+      "fp": 64,
+      "fn": 608,
+      "precision": 0.7168141592920354,
+      "recall": 0.21038961038961038,
+      "f1": 0.3253012048192771
+    }
+  },
+  "cross_day": [
+    {
+      "fit_day": 6,
+      "eval_day": 7,
+      "w": 0.55,
+      "blend": {
+        "pr_auc": 0.2862384627718139,
+        "tp": 78,
+        "fp": 12,
+        "fn": 324,
+        "precision": 0.8666666666666667,
+        "recall": 0.19402985074626866,
+        "f1": 0.3170731707317074
+      },
+      "forest_alone": {
+        "pr_auc": 0.269540506712619,
+        "tp": 80,
+        "fp": 45,
+        "fn": 322,
+        "precision": 0.64,
+        "recall": 0.19900497512437812,
+        "f1": 0.30360531309297917
+      }
+    },
+    {
+      "fit_day": 7,
+      "eval_day": 6,
+      "w": 0.3,
+      "blend": {
+        "pr_auc": 0.3071393851933228,
+        "tp": 90,
+        "fp": 70,
+        "fn": 278,
+        "precision": 0.5625,
+        "recall": 0.24456521739130435,
+        "f1": 0.34090909090909094
+      },
+      "forest_alone": {
+        "pr_auc": 0.2980086763433836,
+        "tp": 73,
+        "fp": 18,
+        "fn": 295,
+        "precision": 0.8021978021978022,
+        "recall": 0.1983695652173913,
+        "f1": 0.31808278867102396
+      }
+    }
+  ]
+}

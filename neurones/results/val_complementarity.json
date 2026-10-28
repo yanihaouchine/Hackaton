@@ -1,0 +1,89 @@
+{
+  "run": {
+    "date": "2026-10-27T16:52:04+00:00",
+    "commit": "3da30be",
+    "dirty": false,
+    "seed": 42,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "torch": "2.14.1"
+    },
+    "feature_digest": "03a26672a4ef"
+  },
+  "written": "2026-10-27T17:52:04",
+  "model": "h64-32_n100_s42",
+  "split": "val",
+  "thresholds": {
+    "mlp": 0.2929190993309021,
+    "forest": 0.8289875082247798
+  },
+  "mlp": {
+    "tp": 549,
+    "fp": 102,
+    "fn": 487,
+    "precision": 0.8433179723502304,
+    "recall": 0.5299227799227799,
+    "f1": 0.6508595139300534,
+    "pr_auc": 0.6250783790468761
+  },
+  "forest": {
+    "tp": 563,
+    "fp": 58,
+    "fn": 473,
+    "precision": 0.9066022544283414,
+    "recall": 0.5434362934362934,
+    "f1": 0.6795413397706699,
+    "pr_auc": 0.6528823610629764
+  },
+  "illicit_tx": {
+    "both": 507,
+    "only_mlp": 42,
+    "only_forest": 56,
+    "neither": 431,
+    "n_illicit": 1036
+  },
+  "false_alerts": {
+    "both": 19,
+    "only_mlp": 83,
+    "only_forest": 39
+  },
+  "attempts": {
+    "n": 157,
+    "both": 141,
+    "only_mlp": 4,
+    "only_forest": 6,
+    "neither": 6
+  },
+  "bounds": {
+    "union_or": {
+      "tp": 605,
+      "fp": 141,
+      "fn": 431,
+      "precision": 0.8109919571045576,
+      "recall": 0.583976833976834,
+      "f1": 0.6790123456790124
+    },
+    "intersection_and": {
+      "tp": 507,
+      "fp": 19,
+      "fn": 529,
+      "precision": 0.9638783269961977,
+      "recall": 0.4893822393822394,
+      "f1": 0.649167733674776
+    }
+  },
+  "spearman_scores": {
+    "all": 0.5581949558328855,
+    "illicit": 0.9028108386541993,
+    "licit_alerted_by_either": -0.2559827047390727
+  }
+}
