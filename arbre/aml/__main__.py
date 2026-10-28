@@ -73,6 +73,12 @@ def _cmd_evaluate(a: argparse.Namespace) -> None:
     evaluate_model(a.variant, a.model, tuple(a.splits.split(",")), unique="val" != a.splits, cascade=a.cascade)
 
 
+def _cmd_transfer(a: argparse.Namespace) -> None:
+    from aml.transfer import THREADS, run
+
+    run(a.variant, a.model, cascade=not a.no_cascade, threads=a.threads or THREADS)
+
+
 def _cmd_typology(a: argparse.Namespace) -> None:
     from aml.typology import train
 
@@ -198,6 +204,13 @@ def main(argv: list[str] | None = None) -> None:
     s.add_argument("--splits", default="val", help="ex. test,tail,test_lit (le test n'est lu qu'ici)")
     s.add_argument("--cascade", action="store_true", help="applique le pré-filtrage comme en ligne")
     s.set_defaults(func=_cmd_evaluate)
+
+    s = sub.add_parser("transfer", help="modèle figé évalué sur une autre variante entière (results/transfer_*)")
+    s.add_argument("--variant", required=True, help="ex. HI-Medium, LI-Small")
+    s.add_argument("--model", default="strict")
+    s.add_argument("--no-cascade", action="store_true", help="forêt complète sur chaque transaction (lent)")
+    s.add_argument("--threads", type=int, default=0, help="threads de notation (0 = min(8, cœurs))")
+    s.set_defaults(func=_cmd_transfer)
 
     s = sub.add_parser("bench", help="frugalité : débit, latences, RAM, tailles, énergie (results/bench_*.json)")
     s.add_argument("--variant", default=DEFAULT_VARIANT)

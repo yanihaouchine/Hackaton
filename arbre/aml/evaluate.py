@@ -92,13 +92,20 @@ def typology_report(y: np.ndarray, alert: np.ndarray, attempt: np.ndarray, typ: 
     y = np.asarray(y).astype(bool)
     alert = np.asarray(alert).astype(bool)
     dec = np.asarray(t) if decision_t is None else np.asarray(decision_t)
+    # indices de chaque tentative, regroupés une fois (un balayage par tentative est trop lent sur HI-Medium)
+    pat_idx = np.flatnonzero(attempt >= 0)
+    order = pat_idx[np.argsort(attempt[pat_idx], kind="stable")]
+    a_ids, first = np.unique(attempt[order], return_index=True)
+    groups = dict(zip(a_ids.tolist(), np.split(order, first[1:]), strict=True))
     out = {}
     for k, name in enumerate(TYPOLOGIES):
         m = typ == k
         ids = np.unique(attempt[m])
         det, delays, before_end = 0, [], 0
         for a in ids:
-            idx = np.flatnonzero(attempt == a)
+            idx = groups.get(int(a))
+            if idx is None:
+                idx = np.flatnonzero(attempt == a)
             al = idx[alert[idx]]
             if len(al):
                 det += 1
