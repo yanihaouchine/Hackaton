@@ -161,12 +161,49 @@ def run(seed: int, name: str, hidden=(64, 32), gru: int = 16, neg_rate: float = 
     return payload
 
 
+class HistScorer:
+    """Modèle séquentiel livré (artifacts/<nom>/model.pt) : log-cote recalibrée de n'importe quelles lignes du flux."""
+
+    def __init__(self, name: str):
+        ck = torch.load(ARTIFACTS / name / "model.pt", weights_only=True)
+        n_dense = ck["state_dict"]["prep.mean"].numel()
+        prep = Prep(ck["names"], ck["cat_sizes"], np.zeros(n_dense), np.ones(n_dense))
+        self.net = HistNet(prep, tuple(ck["hidden"]), ck["gru"], ck["dropout"])
+        self.net.load_state_dict(ck["state_dict"])
+        self.offset = math.log(ck["neg_rate"])
+        self.threshold = json.loads((ARTIFACTS / name / "meta.json").read_text())["threshold"]
+        self.X, _, self.cols = load_features()
+        self.stream, _ = load_stream()
+        self.ram = SimpleNamespace(**{f: np.asarray(getattr(self.stream, f)) for f in FIELDS})
+        self.hist = build_index(self.ram.src, self.ram.dst, ck["k"])
+
+    def logit(self, rows: np.ndarray) -> np.ndarray:
+        torch.set_num_threads(THREADS)
+        return logits(self.net, self.X, self.cols, self.hist, rows, self.ram) + self.offset
+
+
+SCORED_SPLITS = ("val", "test", "tail")
+
+
+def dump_logits(name: str) -> None:
+    """Écrit les log-cotes du modèle livré pour chaque période (artifacts/<nom>/logit_<période>.npy), sans
+    étiquette. Le mélange et l'évaluation les relisent sans importer torch (conflit libomp avec lightgbm)."""
+    sc = HistScorer(name)
+    for sp in SCORED_SPLITS:
+        np.save(ARTIFACTS / name / f"logit_{sp}.npy", sc.logit(np.arange(*sc.stream.split_range(sp))))
+    print(f"{name} : log-cotes écrites pour {', '.join(SCORED_SPLITS)}")
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--max-epochs", type=int, default=30)
     p.add_argument("--name")
+    p.add_argument("--dump", metavar="NOM", help="écrit seulement les log-cotes d'un modèle déjà entraîné")
     a = p.parse_args()
+    if a.dump:
+        dump_logits(a.dump)
+        return
     run(a.seed, a.name or f"hist_h64-32_g16_s{a.seed}", max_epochs=a.max_epochs)
 
 
