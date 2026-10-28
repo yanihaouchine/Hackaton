@@ -1,0 +1,64 @@
+{
+  "run": {
+    "date": "2026-10-28T08:52:59+00:00",
+    "commit": "08f61d2",
+    "dirty": false,
+    "seed": 42,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.1",
+      "onnxruntime": "1.31.1"
+    },
+    "feature_digest": "03a26672a4ef",
+    "variant": "HI-Small"
+  },
+  "written": "2026-10-28T09:52:59",
+  "model": "hist_h64-32_g16_s42",
+  "threads": 1,
+  "onnx": {
+    "path": "artifacts/hist_h64-32_g16_s42/model.onnx",
+    "file_bytes": 95710,
+    "load_ms": 3.5,
+    "max_abs_diff_ort_torch": 1.2743038269036333e-07,
+    "n_checked": 20000,
+    "small_batches_max_abs_diff": {
+      "1": 9.378709364682436e-09,
+      "3": 1.5772002370795235e-08,
+      "one_by_one_vs_batch": 0.0
+    }
+  },
+  "n_params": 19281,
+  "model_only": {
+    "latency_us_p50": 31.23,
+    "latency_us_p99": 38.34,
+    "throughput_tx_s": 509633
+  },
+  "sequence_preparation_numpy": {
+    "latency_us_p50": 27.71,
+    "latency_us_p99": 32.38,
+    "throughput_tx_s": 1247590,
+    "batch_of_200k_s": 0.16,
+    "note": "prototype Python : index d'historique + numpy ; pas le coût d'une implémentation en flux"
+  },
+  "history_state_sizing": {
+    "accounts": 515088,
+    "k": 8,
+    "bytes_per_event": 14,
+    "bytes": 57689856,
+    "measured": false,
+    "note": "tampon circulaire par compte, non implémenté"
+  },
+  "event_dim": 13,
+  "max_rss_mb_process": 1810,
+  "energy": "non mesuré"
+}

@@ -1,0 +1,521 @@
+{
+  "run": {
+    "date": "2026-10-28T08:54:01+00:00",
+    "commit": "08f61d2",
+    "dirty": false,
+    "seed": 45,
+    "machine": {
+      "hostname": "Youssefs-MacBook-Air.local",
+      "arch": "arm64",
+      "cpu": "arm",
+      "n_cpus": 10,
+      "python": "3.14.6",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+    },
+    "versions": {
+      "numpy": "2.5.4",
+      "polars": "2.1.0",
+      "lightgbm": "4.7.0",
+      "torch": "2.14.1",
+      "onnxruntime": "1.31.1"
+    },
+    "feature_digest": "03a26672a4ef",
+    "variant": "LI-Small"
+  },
+  "written": "2026-10-28T09:54:01",
+  "model": "hist_h64-32_g16_s45",
+  "threshold": 0.19960014522075653,
+  "splits": {
+    "test": {
+      "tp": 153,
+      "fp": 133,
+      "fn": 515,
+      "n_alerts": 286,
+      "precision": 0.534965034965035,
+      "recall": 0.22904191616766467,
+      "f1": 0.3207547169811321,
+      "threshold": 0.19960014522075653,
+      "n_tx": 1174450,
+      "n_pos": 668,
+      "pr_auc": 0.28659270942617676,
+      "f1_ci95": [
+        0.28216561911073373,
+        0.3593253122697824
+      ],
+      "p_at_k": [
+        {
+          "k": 10,
+          "precision_mean": 1.0,
+          "recall": 0.029940119760479042,
+          "n_days": 2
+        },
+        {
+          "k": 25,
+          "precision_mean": 1.0,
+          "recall": 0.0748502994011976,
+          "n_days": 2
+        },
+        {
+          "k": 50,
+          "precision_mean": 0.99,
+          "recall": 0.14820359281437126,
+          "n_days": 2
+        },
+        {
+          "k": 100,
+          "precision_mean": 0.73,
+          "recall": 0.218562874251497,
+          "n_days": 2
+        },
+        {
+          "k": 200,
+          "precision_mean": 0.405,
+          "recall": 0.24251497005988024,
+          "n_days": 2
+        },
+        {
+          "k": 500,
+          "precision_mean": 0.197,
+          "recall": 0.2949101796407186,
+          "n_days": 2
+        }
+      ],
+      "typology": {
+        "FAN-OUT": {
+          "attempts": 8,
+          "attempts_detected": 7,
+          "attempt_recall": 0.875,
+          "tx": 24,
+          "tx_recall": 0.7916666666666666,
+          "median_delay_h": 52.38333333333333,
+          "detected_before_last_tx": 5
+        },
+        "FAN-IN": {
+          "attempts": 4,
+          "attempts_detected": 2,
+          "attempt_recall": 0.5,
+          "tx": 6,
+          "tx_recall": 0.5,
+          "median_delay_h": 45.95,
+          "detected_before_last_tx": 1
+        },
+        "CYCLE": {
+          "attempts": 8,
+          "attempts_detected": 7,
+          "attempt_recall": 0.875,
+          "tx": 18,
+          "tx_recall": 0.9444444444444444,
+          "median_delay_h": 22.9,
+          "detected_before_last_tx": 5
+        },
+        "GATHER-SCATTER": {
+          "attempts": 8,
+          "attempts_detected": 7,
+          "attempt_recall": 0.875,
+          "tx": 26,
+          "tx_recall": 0.7692307692307693,
+          "median_delay_h": 50.233333333333334,
+          "detected_before_last_tx": 5
+        },
+        "SCATTER-GATHER": {
+          "attempts": 8,
+          "attempts_detected": 5,
+          "attempt_recall": 0.625,
+          "tx": 41,
+          "tx_recall": 0.7560975609756098,
+          "median_delay_h": 57.46666666666667,
+          "detected_before_last_tx": 4
+        },
+        "BIPARTITE": {
+          "attempts": 7,
+          "attempts_detected": 6,
+          "attempt_recall": 0.8571428571428571,
+          "tx": 35,
+          "tx_recall": 0.6857142857142857,
+          "median_delay_h": 31.950000000000003,
+          "detected_before_last_tx": 5
+        },
+        "STACK": {
+          "attempts": 5,
+          "attempts_detected": 5,
+          "attempt_recall": 1.0,
+          "tx": 17,
+          "tx_recall": 0.8823529411764706,
+          "median_delay_h": 63.983333333333334,
+          "detected_before_last_tx": 4
+        },
+        "RANDOM": {
+          "attempts": 7,
+          "attempts_detected": 7,
+          "attempt_recall": 1.0,
+          "tx": 17,
+          "tx_recall": 1.0,
+          "median_delay_h": 25.15,
+          "detected_before_last_tx": 5
+        },
+        "_all_patterns": {
+          "tx": 184,
+          "tx_recall": 0.7934782608695652
+        },
+        "_non_pattern": {
+          "tx": 484,
+          "tx_recall": 0.014462809917355372
+        }
+      },
+      "cases": {
+        "n_cases": 195,
+        "case_precision": 0.40512820512820513,
+        "cases_per_day": {
+          "8": 109,
+          "9": 86
+        },
+        "p_at_k": [
+          {
+            "k": 5,
+            "precision_mean": 1.0
+          },
+          {
+            "k": 10,
+            "precision_mean": 1.0
+          },
+          {
+            "k": 25,
+            "precision_mean": 0.8600000000000001
+          },
+          {
+            "k": 50,
+            "precision_mean": 0.73
+          }
+        ]
+      }
+    },
+    "tail": {
+      "tp": 128,
+      "fp": 6,
+      "fn": 6,
+      "n_alerts": 134,
+      "precision": 0.9552238805970149,
+      "recall": 0.9552238805970149,
+      "f1": 0.9552238805970149,
+      "threshold": 0.19960014522075653,
+      "n_tx": 223,
+      "n_pos": 134,
+      "pr_auc": 0.9810472087489025,
+      "f1_ci95": [
+        0.9266366681807858,
+        0.9782647794807632
+      ],
+      "p_at_k": [
+        {
+          "k": 10,
+          "precision_mean": 0.8496598639455782,
+          "recall": 0.3880597014925373,
+          "n_days": 7
+        },
+        {
+          "k": 25,
+          "precision_mean": 0.8068027210884354,
+          "recall": 0.7686567164179104,
+          "n_days": 7
+        },
+        {
+          "k": 50,
+          "precision_mean": 0.6735615536537195,
+          "recall": 0.9925373134328358,
+          "n_days": 7
+        },
+        {
+          "k": 100,
+          "precision_mean": 0.6293314979950925,
+          "recall": 1.0,
+          "n_days": 7
+        },
+        {
+          "k": 200,
+          "precision_mean": 0.6293314979950925,
+          "recall": 1.0,
+          "n_days": 7
+        },
+        {
+          "k": 500,
+          "precision_mean": 0.6293314979950925,
+          "recall": 1.0,
+          "n_days": 7
+        }
+      ],
+      "typology": {
+        "FAN-OUT": {
+          "attempts": 5,
+          "attempts_detected": 5,
+          "attempt_recall": 1.0,
+          "tx": 22,
+          "tx_recall": 1.0,
+          "median_delay_h": 57.583333333333336,
+          "detected_before_last_tx": 4
+        },
+        "FAN-IN": {
+          "attempts": 1,
+          "attempts_detected": 1,
+          "attempt_recall": 1.0,
+          "tx": 8,
+          "tx_recall": 1.0,
+          "median_delay_h": 29.183333333333334,
+          "detected_before_last_tx": 1
+        },
+        "CYCLE": {
+          "attempts": 5,
+          "attempts_detected": 5,
+          "attempt_recall": 1.0,
+          "tx": 24,
+          "tx_recall": 1.0,
+          "median_delay_h": 28.983333333333334,
+          "detected_before_last_tx": 3
+        },
+        "GATHER-SCATTER": {
+          "attempts": 4,
+          "attempts_detected": 4,
+          "attempt_recall": 1.0,
+          "tx": 44,
+          "tx_recall": 0.9545454545454546,
+          "median_delay_h": 86.00833333333333,
+          "detected_before_last_tx": 4
+        },
+        "SCATTER-GATHER": {
+          "attempts": 2,
+          "attempts_detected": 2,
+          "attempt_recall": 1.0,
+          "tx": 18,
+          "tx_recall": 0.9444444444444444,
+          "median_delay_h": 66.48333333333333,
+          "detected_before_last_tx": 2
+        },
+        "BIPARTITE": {
+          "attempts": 2,
+          "attempts_detected": 2,
+          "attempt_recall": 1.0,
+          "tx": 7,
+          "tx_recall": 0.8571428571428571,
+          "median_delay_h": 31.266666666666666,
+          "detected_before_last_tx": 1
+        },
+        "STACK": {
+          "attempts": 2,
+          "attempts_detected": 1,
+          "attempt_recall": 0.5,
+          "tx": 7,
+          "tx_recall": 0.7142857142857143,
+          "median_delay_h": 46.13333333333333,
+          "detected_before_last_tx": 1
+        },
+        "RANDOM": {
+          "attempts": 3,
+          "attempts_detected": 3,
+          "attempt_recall": 1.0,
+          "tx": 4,
+          "tx_recall": 1.0,
+          "median_delay_h": 74.0,
+          "detected_before_last_tx": 1
+        },
+        "_all_patterns": {
+          "tx": 134,
+          "tx_recall": 0.9552238805970149
+        },
+        "_non_pattern": {
+          "tx": 0,
+          "tx_recall": null
+        }
+      },
+      "cases": {
+        "n_cases": 30,
+        "case_precision": 1.0,
+        "cases_per_day": {
+          "10": 24,
+          "11": 5,
+          "12": 1
+        },
+        "p_at_k": [
+          {
+            "k": 5,
+            "precision_mean": 1.0
+          },
+          {
+            "k": 10,
+            "precision_mean": 1.0
+          },
+          {
+            "k": 25,
+            "precision_mean": 1.0
+          },
+          {
+            "k": 50,
+            "precision_mean": 1.0
+          }
+        ]
+      }
+    },
+    "test_lit": {
+      "tp": 281,
+      "fp": 139,
+      "fn": 521,
+      "n_alerts": 420,
+      "precision": 0.669047619047619,
+      "recall": 0.35037406483790523,
+      "f1": 0.4599018003273323,
+      "threshold": 0.19960014522075653,
+      "n_tx": 1174673,
+      "n_pos": 802,
+      "pr_auc": 0.41760668084535846,
+      "f1_ci95": [
+        0.42267206477732794,
+        0.494597729316985
+      ],
+      "p_at_k": [
+        {
+          "k": 10,
+          "precision_mean": 0.8830687830687831,
+          "recall": 0.08977556109725686,
+          "n_days": 9
+        },
+        {
+          "k": 25,
+          "precision_mean": 0.8497354497354498,
+          "recall": 0.19077306733167082,
+          "n_days": 9
+        },
+        {
+          "k": 50,
+          "precision_mean": 0.7438812083973374,
+          "recall": 0.2892768079800499,
+          "n_days": 9
+        },
+        {
+          "k": 100,
+          "precision_mean": 0.6517022762184053,
+          "recall": 0.3491271820448878,
+          "n_days": 9
+        },
+        {
+          "k": 200,
+          "precision_mean": 0.5794800539961831,
+          "recall": 0.3690773067331671,
+          "n_days": 9
+        },
+        {
+          "k": 500,
+          "precision_mean": 0.5332578317739609,
+          "recall": 0.41271820448877805,
+          "n_days": 9
+        }
+      ],
+      "typology": {
+        "FAN-OUT": {
+          "attempts": 8,
+          "attempts_detected": 8,
+          "attempt_recall": 1.0,
+          "tx": 46,
+          "tx_recall": 0.8913043478260869,
+          "median_delay_h": 45.21666666666667,
+          "detected_before_last_tx": 6
+        },
+        "FAN-IN": {
+          "attempts": 4,
+          "attempts_detected": 2,
+          "attempt_recall": 0.5,
+          "tx": 14,
+          "tx_recall": 0.7857142857142857,
+          "median_delay_h": 45.95,
+          "detected_before_last_tx": 2
+        },
+        "CYCLE": {
+          "attempts": 8,
+          "attempts_detected": 7,
+          "attempt_recall": 0.875,
+          "tx": 42,
+          "tx_recall": 0.9761904761904762,
+          "median_delay_h": 22.9,
+          "detected_before_last_tx": 7
+        },
+        "GATHER-SCATTER": {
+          "attempts": 8,
+          "attempts_detected": 7,
+          "attempt_recall": 0.875,
+          "tx": 70,
+          "tx_recall": 0.8857142857142857,
+          "median_delay_h": 50.233333333333334,
+          "detected_before_last_tx": 7
+        },
+        "SCATTER-GATHER": {
+          "attempts": 8,
+          "attempts_detected": 6,
+          "attempt_recall": 0.75,
+          "tx": 59,
+          "tx_recall": 0.8135593220338984,
+          "median_delay_h": 62.49166666666667,
+          "detected_before_last_tx": 5
+        },
+        "BIPARTITE": {
+          "attempts": 7,
+          "attempts_detected": 7,
+          "attempt_recall": 1.0,
+          "tx": 42,
+          "tx_recall": 0.7142857142857143,
+          "median_delay_h": 33.733333333333334,
+          "detected_before_last_tx": 5
+        },
+        "STACK": {
+          "attempts": 6,
+          "attempts_detected": 5,
+          "attempt_recall": 0.8333333333333334,
+          "tx": 24,
+          "tx_recall": 0.8333333333333334,
+          "median_delay_h": 63.983333333333334,
+          "detected_before_last_tx": 4
+        },
+        "RANDOM": {
+          "attempts": 7,
+          "attempts_detected": 7,
+          "attempt_recall": 1.0,
+          "tx": 21,
+          "tx_recall": 1.0,
+          "median_delay_h": 25.15,
+          "detected_before_last_tx": 5
+        },
+        "_all_patterns": {
+          "tx": 318,
+          "tx_recall": 0.8616352201257862
+        },
+        "_non_pattern": {
+          "tx": 484,
+          "tx_recall": 0.014462809917355372
+        }
+      },
+      "cases": {
+        "n_cases": 204,
+        "case_precision": 0.43137254901960786,
+        "cases_per_day": {
+          "8": 109,
+          "9": 85,
+          "10": 10
+        },
+        "p_at_k": [
+          {
+            "k": 5,
+            "precision_mean": 1.0
+          },
+          {
+            "k": 10,
+            "precision_mean": 1.0
+          },
+          {
+            "k": 25,
+            "precision_mean": 0.9199999999999999
+          },
+          {
+            "k": 50,
+            "precision_mean": 0.8133333333333334
+          }
+        ]
+      }
+    }
+  }
+}
